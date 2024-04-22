@@ -1,0 +1,13 @@
+{
+  "activity": {
+    "invoice-create": "{sfirstname} {slastname} ได้เพิ่มบิลให้ลูกค้า {firstname} {lastname} แล้ว!",
+    "invoice-update": "{sfirstname} {slastname} ได้แก้ไขบิล #{invoiceId} ของลูกค้า {firstname} {lastname} แล้ว!",
+    "invoice-cancel": "{sfirstname} {slastname} ได้ยกเลิกบิล #{invoiceId} ของลูกค้า {firstname} {lastname} แล้ว!",
+    "invoice-deny": "{sfirstname} {slastname} ได้ปฏิเสธบิล #{invoiceId} ของลูกค้า {firstname} {lastname} แล้ว!",
+    "invoice-success": "{sfirstname} {slastname} ได้อนุมัติบิล #{invoiceId} ของลูกค้า {firstname} {lastname} แล้ว!",
+    "customer-create": "{sfirstname} {slastname} ได้เพิ่มลูกค้า {firstname} {lastname} แล้ว!",
+    "customer-update": "{sfirstname} {slastname} ได้แก้ไขลูกค้า {firstname} {lastname} แล้ว!",
+    "customer-delete": "{sfirstname} {slastname} ได้ลบลูกค้า {firstname} {lastname} แล้ว!",
+    "customer-line_connect": "{sfirstname} {slastname} ได้เชื่อมต่อไลน์ของลูกค้า {firstname} {lastname} แล้ว!"
+  }
+}
