@@ -30,7 +30,7 @@ export const getUsers = async (table: TableFetch) => {
           Invoice: { select: { id: true } },
         }
       }),
-      Prisma.customers.count(),
+      Prisma.user.count(),
     ])
 
     return {
