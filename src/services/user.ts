@@ -5,6 +5,7 @@ import * as formatter from '@/libs/formatter';
 import { revalidatePath } from "next/cache";
 import { paths } from "@/paths";
 import { Inputs } from "@/app/admin/admin/schema";
+import bcrypt from 'bcrypt';
 
 export const getUsers = async (table: TableFetch) => {
   try {
@@ -36,6 +37,8 @@ export const getUsers = async (table: TableFetch) => {
       total: data[1]
     }
   } catch (error) {
+    console.log(error);
+    
     return {
       state: false,
       data: [],
@@ -49,7 +52,7 @@ export const upsertAdmin = async (payload: Inputs, id?: number) => {
     const data = {
       firstname: payload.firstname,
       lastname: payload.lastname,
-      password: payload?.password || "",
+      password: await bcrypt.hash(payload.password, 16),
       email: payload.email
     }
 
@@ -136,7 +139,7 @@ export const setAdminPassword = async (password: string, id: number) => {
   try {
     await Prisma.user.update({
       where: { id: id },
-      data: { password: password }
+      data: { password: await bcrypt.hash(password, 16) }
     })
 
     return { state: true }

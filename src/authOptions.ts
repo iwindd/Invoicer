@@ -1,6 +1,7 @@
 import Prisma from '@/libs/prisma'
 import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
+import bcrypt from 'bcrypt';
 
 export const authOptions = {
   pages: {
@@ -44,11 +45,12 @@ export const authOptions = {
         if (!credentials?.email || !credentials?.password) return null;
 
         try {
-          const data = await Prisma.user.findFirst({
-            where: { email: credentials.email, password: credentials.password, isDeleted: false }
+          const data = await Prisma.user.findUnique({
+            where: { email: credentials.email, isDeleted: false }
           })
 
           if (!data) return null
+          if (!await bcrypt.compare(credentials.password, data.password)) return null
 
           return {
             ...data,
