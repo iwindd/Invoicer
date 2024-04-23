@@ -5,7 +5,7 @@ import { User } from "../next-auth";
 
 async function Middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
-  const originalUrl = request.nextUrl.protocol + process.env.NEXTAUTH_URL + request.nextUrl.pathname
+  const originalUrl = process.env.NEXTAUTH_URL + request.nextUrl.pathname
   const token: User = await getToken({ req: request }) as any;
 
   if (pathname == paths.auth.signIn && !token) return NextResponse.next();
