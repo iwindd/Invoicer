@@ -25,6 +25,7 @@ export const getUsers = async (table: TableFetch) => {
           firstname: true,
           lastname: true,
           email: true,
+          permission: true,
           Customers: { select: { id: true } },
           Invoice: { select: { id: true } },
         }
