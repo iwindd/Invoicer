@@ -1,6 +1,6 @@
 "use client";
 import { CancelTwoTone, EditTwoTone, UpdateTwoTone } from '@mui/icons-material'
-import { Button, Card, CardActions, CardHeader, Divider, TextField } from '@mui/material'
+import { Button, Card, CardActions, CardHeader, Checkbox, Divider, FormControlLabel, FormGroup, TextField } from '@mui/material'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import React from 'react'
 import { useForm } from 'react-hook-form'
@@ -21,6 +21,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
   const [isEdit, setIsEdit] = React.useState<boolean>(false);
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
+  const [checked, setChecked] = React.useState(user.permission == 1);
 
   const confirmation = useConfirm({
     title: "แจ้งเตือน",
@@ -28,7 +29,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
     onConfirm: async (data: Inputs) => {
       try {
         setBackdrop(true);
-        const resp = await upsertAdmin(data, user.id)
+        const resp = await upsertAdmin(data, user.id, checked)
 
         if (resp.state) {
           enqueueSnackbar("แก้ไขแอดมินสำเร็จ!", { variant: 'success' });
@@ -105,6 +106,21 @@ const EditProfile = ({ user }: EditProfileProps) => {
                 fullWidth
                 disabled={!isEdit}
               />
+            </Grid>
+            <Grid lg={12} sm={12}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
+                  }
+                  defaultChecked
+                  disabled={!isEdit}
+                  label="แอดมินสูงสุด"
+                />
+              </FormGroup>
             </Grid>
           </Grid>
           <Divider />

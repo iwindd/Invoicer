@@ -53,7 +53,7 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
     const data = {
       firstname: payload.firstname,
       lastname: payload.lastname,
-      password: await bcrypt.hash(payload.password, 16),
+      password: await bcrypt.hash(payload?.password || "unchanged", 16),
       email: payload.email,
       permission: superadmin ? 1 : 0
     }
@@ -67,12 +67,15 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
         firstname: data.firstname,
         lastname: data.lastname,
         email: data.email,
+        permission: data.permission
       },
     })
 
     revalidatePath(`${paths.admin.admin}/${admin.id}`)
     return { state: true }
   } catch (error) {
+    console.log(error);
+    
     return { state: false }
   }
 }
@@ -106,6 +109,7 @@ export const getAdmin = async (id: number) => {
         lastname: true,
         email: true,
         id: true,
+        permission: true,
 
         Customers: {
           select: {
