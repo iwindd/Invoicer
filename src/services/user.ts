@@ -6,6 +6,7 @@ import { revalidatePath } from "next/cache";
 import { paths } from "@/paths";
 import { Inputs } from "@/app/admin/admin/schema";
 import bcrypt from 'bcrypt';
+import { getServerSession } from "@/libs/session";
 
 export const getUsers = async (table: TableFetch) => {
   try {
@@ -38,7 +39,7 @@ export const getUsers = async (table: TableFetch) => {
     }
   } catch (error) {
     console.log(error);
-    
+
     return {
       state: false,
       data: [],
@@ -77,6 +78,9 @@ export const upsertAdmin = async (payload: Inputs, id?: number) => {
 
 export const deleteAdmin = async (id: number) => {
   try {
+    const session = await getServerSession();
+
+    if (session?.user.uid == id) return { state: false }
     const admin = await Prisma.user.update({
       where: { id: id },
       data: { isDeleted: true }
