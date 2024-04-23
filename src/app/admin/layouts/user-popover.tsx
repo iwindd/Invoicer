@@ -13,6 +13,7 @@ import { signOut, useSession } from 'next-auth/react';
 import { useSnackbar } from 'notistack';
 import { useInterface } from '@/app/providers/InterfaceProvider';
 import { paths } from '@/paths';
+import RouterLink from 'next/link';
 
 export interface UserPopoverProps {
   anchorEl: Element | null;
@@ -28,6 +29,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
 
   const onSignup = React.useCallback(async (): Promise<void> => {
     setBackdrop(true);
+    onClose();
     try {
       await signOut({
         callbackUrl: `${paths.auth.signIn}`,
@@ -41,7 +43,7 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       enqueueSnackbar("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง", { variant: "error" })
       setBackdrop(false);
     }
-  }, [router, enqueueSnackbar, setBackdrop]);
+  }, [router, enqueueSnackbar, setBackdrop, onClose]);
 
   return (
     <Popover
@@ -59,6 +61,12 @@ export function UserPopover({ anchorEl, onClose, open }: UserPopoverProps): Reac
       </Box>
       <Divider />
       <MenuList disablePadding sx={{ p: '8px', '& .MuiMenuItem-root': { borderRadius: 1 } }}>
+        <MenuItem component={RouterLink} href={`${paths.admin.admin}/${data?.user.uid}`} onClick={onClose}>
+          <ListItemIcon>
+            <PeopleTwoTone />
+          </ListItemIcon>
+          บัญชี
+        </MenuItem>
         <MenuItem onClick={onSignup}>
           <ListItemIcon>
             <LogoutTwoTone />
