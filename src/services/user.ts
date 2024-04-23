@@ -48,13 +48,14 @@ export const getUsers = async (table: TableFetch) => {
   }
 }
 
-export const upsertAdmin = async (payload: Inputs, id?: number) => {
+export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boolean) => {
   try {
     const data = {
       firstname: payload.firstname,
       lastname: payload.lastname,
       password: await bcrypt.hash(payload.password, 16),
-      email: payload.email
+      email: payload.email,
+      permission: superadmin ? 1 : 0
     }
 
     const admin = await Prisma.user.upsert({

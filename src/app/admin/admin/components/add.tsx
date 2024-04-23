@@ -1,6 +1,6 @@
 "use client";
 import * as React from 'react';
-import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack, TextField } from '@mui/material';
+import { Button, Checkbox, Dialog, DialogActions, DialogContent, DialogTitle, FormControlLabel, FormGroup, Stack, TextField } from '@mui/material';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Inputs, Schema } from '../schema';
 import { useForm } from 'react-hook-form';
@@ -21,6 +21,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const [isLoading, setLoading] = React.useState<boolean>(false);
   const { enqueueSnackbar } = useSnackbar()
   const queryClient = useQueryClient()
+  const [checked, setChecked] = React.useState(true);
 
   const {
     register,
@@ -34,7 +35,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const onSubmit = async (payload: Inputs) => {
     if (isLoading) return
     setLoading(true);
-    const resp = await upsertAdmin(payload);
+    const resp = await upsertAdmin(payload, undefined, checked);
 
     if (resp.state) {
       onClose()
@@ -126,6 +127,20 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
                 disabled={isLoading}
                 fullWidth
               />
+            </Grid>
+            <Grid lg={12} sm={12} sx={{ px: 0.5 }}>
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={checked}
+                      onChange={(e) => setChecked(e.target.checked)}
+                    />
+                  }
+                  defaultChecked
+                  label="แอดมินสูงสุด"
+                />
+              </FormGroup>
             </Grid>
           </Grid>
         </DialogContent>
