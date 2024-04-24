@@ -33,7 +33,7 @@ export const getCustomers = async (table: TableFetch) => {
           id: true,
           email: true,
           createdAt: true,
-          
+
           createdBy: {
             select: {
               firstname: true,
@@ -52,7 +52,7 @@ export const getCustomers = async (table: TableFetch) => {
           }
         }
       }),
-      Prisma.customers.count(),
+      Prisma.customers.count({ where: { isDeleted: false } }),
     ])
 
     return {
@@ -73,7 +73,7 @@ export const getCustomer = async (id: number) => {
   try {
     const data = await Prisma.customers.findFirst({
       where: { id: id },
-      select:{ 
+      select: {
         id: true,
         firstname: true,
         lastname: true,
@@ -140,7 +140,7 @@ export const upsertCustomer = async (payload: Inputs, id?: number) => {
     return { state: true }
   } catch (error) {
     console.log(error);
-    
+
     return { state: false }
   }
 }

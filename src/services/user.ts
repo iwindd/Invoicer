@@ -30,7 +30,7 @@ export const getUsers = async (table: TableFetch) => {
           Invoice: { select: { id: true } },
         }
       }),
-      Prisma.user.count(),
+      Prisma.user.count({ where: { isDeleted: false } }),
     ])
 
     return {
@@ -76,7 +76,7 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
     return { state: true }
   } catch (error) {
     console.log(error);
-    
+
     return { state: false }
   }
 }
@@ -118,6 +118,9 @@ export const getAdmin = async (id: number) => {
             firstname: true,
             lastname: true,
             createdAt: true
+          },
+          where: {
+            isDeleted: false
           }
         },
         Invoice: {

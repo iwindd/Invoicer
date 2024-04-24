@@ -25,7 +25,7 @@ export const getPayments = async (table: TableFetch) => {
           createdAt: true
         }
       }),
-      Prisma.payment.count(),
+      Prisma.payment.count({ where: { isDeleted: false } }),
     ])
 
     return {
