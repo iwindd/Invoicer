@@ -118,7 +118,7 @@ const EditProfile = ({ user }: EditProfileProps) => {
                   }
                   defaultChecked
                   disabled={!isEdit}
-                  label="แอดมินสูงสุด"
+                  label="ผู้ดูแลระบบ"
                 />
               </FormGroup>
             </Grid>

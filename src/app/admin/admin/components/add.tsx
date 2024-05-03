@@ -138,7 +138,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
                     />
                   }
                   defaultChecked
-                  label="แอดมินสูงสุด"
+                  label="ผู้ดูแลระบบ"
                 />
               </FormGroup>
             </Grid>
