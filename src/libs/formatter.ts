@@ -148,11 +148,14 @@ export const invoice = ({ start, end, status }: { start: Date, end: Date, status
   if (status == 1) return 1;
   if (status == 2) return 2;
   if (status == 0) {
-    if (dayjs().isBetween(dayjs(start), dayjs(end))) return 3;
-    if (dayjs().isAfter(dayjs(end))) return 4
+    const startTime = dayjs(start).startOf('day');
+    const endTime = dayjs(end).endOf('day');
+
+    if (dayjs().isBetween(startTime, endTime)) return 3;
+    if (dayjs().isAfter(endTime)) return 4;
   }
 
-  return 0
+  return 0;
 }
 
 export const invoice_label = (status: number): string => {

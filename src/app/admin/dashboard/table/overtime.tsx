@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import type { SxProps } from '@mui/material/styles';
-import dayjs from '@/libs/dayjs';
+import dayjs, { Dayjs } from '@/libs/dayjs';
 import { ArrowRightTwoTone, MenuTwoTone, ReceiptTwoTone } from '@mui/icons-material';
 import { ListItemIcon } from '@mui/material';
 import * as formatter from '@/libs/formatter'
@@ -25,7 +25,7 @@ export interface OvertimeInvoiceProps {
   invoices?: {
     id: number,
     note: string,
-    end: Date,
+    end: Dayjs,
     owner: { firstname: string, lastname: string }
   }[];
   sx?: SxProps;

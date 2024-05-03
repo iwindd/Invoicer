@@ -17,7 +17,7 @@ import Prisma from '@/libs/prisma'
 import dayjs from '@/libs/dayjs'
 
 const Dashboard = async () => {
-  const invoices = await Prisma.invoice.findMany({
+  const payload = await Prisma.invoice.findMany({
     include: {
       owner: {
         select: {
@@ -27,6 +27,14 @@ const Dashboard = async () => {
       }
     }
   });
+
+  const invoices = payload.map((invoice) => {
+    return {
+      ...invoice,
+      start: dayjs(invoice.start).startOf('day'),
+      end: dayjs(invoice.end).endOf('day')
+    }
+  })
 
   //stats
   const stats = {
