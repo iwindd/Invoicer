@@ -1,0 +1,8 @@
+Node.js Version : v16.20.0
+Database : MariaDB Version 10.4.8
+Web Server : Apache Version 2.xx
+Programming Languages : TypeScript
+Framework : NextJs@13.5.6
+Icon : Mui 
+Component library : Mui
+Date library : Dayjs
