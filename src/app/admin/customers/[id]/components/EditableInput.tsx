@@ -11,16 +11,19 @@ interface Props {
 const EditableInput: FC<Props> = ({ placeholder, value, onChange, type }) => {
   return (
     <Input
-      
+
       placeholder={placeholder}
       value={value}
       type={type}
-      inputProps={{ style: { textAlign: 'end' } }}
+      inputProps={{
+        style: { textAlign: 'end' },
+        ...(
+          type == "number" ? {
+            min: 0
+          } : {})
+      }
+      }
       onChange={(e) => onChange(e.target.value)}
-
-      {...(type == "number" ? {
-        min: 0
-      } : {})}
     />
   )
 }
