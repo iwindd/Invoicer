@@ -55,16 +55,16 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
         </Stack>
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalInvoice id={params.id} sx={{ height: '100%' }} value={`${formatter.number(analysis.data.length)} รายการ`} />
+        <TotalInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(analysis.data.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalSuccessInvoice id={params.id} sx={{ height: '100%' }} value={`${formatter.number(stats.success.length)} รายการ`} />
+        <TotalSuccessInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.success.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalProgressInvoice id={params.id} sx={{ height: '100%' }} value={`${formatter.number(stats.pending.length)} รายการ`} />
+        <TotalProgressInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.pending.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalFailInvoice id={params.id} sx={{ height: '100%' }} value={`${formatter.number(stats.fail.length)} รายการ`} />
+        <TotalFailInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.fail.length)} รายการ`} />
       </Grid>
       <Grid lg={12} md={12} xs={12}>
         <Datatable />
