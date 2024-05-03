@@ -2,7 +2,7 @@
 import { ButtonProps, Paper } from '@mui/material'
 import { gridClasses, DataGrid, GridColDef, GridFilterModel, GridPaginationModel, GridSortDirection, GridSortModel, GridRowClassNameParams, GridCellParams, GridToolbar, DataGridProps } from '@mui/x-data-grid'
 import { useQuery } from '@tanstack/react-query'
-import React from 'react'
+import React, { useEffect } from 'react'
 import _ from 'lodash';
 import { useSearchParams } from 'next/navigation';
 import { TableFetch } from '@/services/type';
@@ -47,6 +47,8 @@ const Datatable = (props: Props) => {
   const fStatus = params.get('fStatus') as string;
   const fSearch = params.get('search') as string;
 
+
+
   const [sortModel, setSortModel] = React.useState<GridSortModel>((fField && fSort) ? [{ field: fField, sort: fSort }] : []);
   const [paginationModel, setPaginationModel] = React.useState<GridPaginationModel>({ pageSize: 15, page: 0, });
   const [filterModel, setFilterModel] = React.useState<GridFilterModel>({
@@ -58,6 +60,18 @@ const Datatable = (props: Props) => {
     quickFilterExcludeHiddenColumns: true,
     quickFilterValues: fSearch ? fSearch.split(" ") : [],
   });
+
+  useEffect(() => {
+    setFilterModel({
+      items: [
+        ...(
+          fStatus ? ([{ field: 'status', operator: 'equals', value: Number(fStatus) }]) : []
+        )
+      ],
+      quickFilterExcludeHiddenColumns: true,
+      quickFilterValues: fSearch ? fSearch.split(" ") : [],
+    })
+  }, [fSearch, fStatus, setFilterModel])
 
   const { data, isLoading, refetch } = useQuery({
     queryKey: [props.name],
