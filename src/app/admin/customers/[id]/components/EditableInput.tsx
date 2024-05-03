@@ -11,11 +11,10 @@ interface Props {
 const EditableInput: FC<Props> = ({ placeholder, value, onChange, type }) => {
   return (
     <Input
-      disableUnderline
+      
       placeholder={placeholder}
       value={value}
       type={type}
-
       inputProps={{ style: { textAlign: 'end' } }}
       onChange={(e) => onChange(e.target.value)}
 
