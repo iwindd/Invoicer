@@ -51,12 +51,33 @@ export const getUsers = async (table: TableFetch) => {
 
 export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boolean) => {
   try {
+    const session = await getServerSession();
+
     const data = {
       firstname: payload.firstname,
       lastname: payload.lastname,
       password: await bcrypt.hash(payload?.password || "unchanged", 16),
       email: payload.email,
       permission: superadmin ? 1 : 0
+    }
+
+    if (id) {
+      // if update permission
+      const source = await Prisma.user.findFirst({ where: { id: session?.user.uid }, select: { canRemove: true } });
+      if (!source) throw Error("no_found_source");
+
+      if (session?.user.uid != id) {
+        // anti superadmin change permission of root superadmin
+        const victim = await Prisma.user.findFirst({ where: { id }, select: { canRemove: true } });
+        if (!victim) throw Error("no_found_victim");
+
+        if (source?.canRemove) {
+          if (!victim.canRemove) throw Error("cannot_change_permission");
+        }
+      } else {
+        // anti root superadmin remove self permission
+        if (!source.canRemove && data.permission == 0) throw Error("cannot_change_permission");
+      }
     }
 
     const admin = await Prisma.user.upsert({
@@ -75,8 +96,6 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
     revalidatePath(`${paths.admin.admin}/${admin.id}`)
     return { state: true }
   } catch (error) {
-    console.log(error);
-
     return { state: false }
   }
 }
@@ -86,7 +105,7 @@ export const deleteAdmin = async (id: number) => {
     const session = await getServerSession();
 
     if (session?.user.uid == id) return { state: false }
-    const admin = await Prisma.user.update({
+    await Prisma.user.update({
       where: { id: id, canRemove: true },
       data: { isDeleted: true }
     })
@@ -150,6 +169,15 @@ export const getAdmin = async (id: number) => {
 
 export const setAdminPassword = async (password: string, id: number) => {
   try {
+    const session = await getServerSession();
+
+    if (session?.user.uid != id) {
+      // anti superadmin change password of root superadmin
+      const victim = await Prisma.user.findFirst({ where: { id: id }, select: { canRemove: true } });
+
+      if (!victim?.canRemove) throw Error("cannot_change_password")
+    }
+
     await Prisma.user.update({
       where: { id: id },
       data: { password: await bcrypt.hash(password, 16) }

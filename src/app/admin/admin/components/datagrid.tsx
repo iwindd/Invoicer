@@ -23,7 +23,7 @@ const columns = (menu: {
     { field: 'createdAt', headerName: 'วันที่เพิ่ม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
     { field: 'firstname', headerName: 'ชื่อ', flex: 1, valueGetter: (_, row: User) => formatter.text(`${row.firstname} ${row.lastname}`) },
     { field: 'email', headerName: 'อีเมล', flex: 1 },
-    { field: 'permission', headerName: 'สถานะ', flex: 1, valueGetter: (value: Number) => value == 1 ? "แอดมินสูงสุด" : "แอดมิน" },
+    { field: 'permission', headerName: 'สถานะ', flex: 1, valueGetter: (value: Number) => value == 1 ? "ผู้ดูแลระบบ" : "แอดมิน" },
     { field: 'Customers', headerName: 'ลูกค้าที่สร้าง', flex: 1, valueGetter: (value: User[]) => formatter.number(value.length) },
     { field: 'Invoice', headerName: 'บิลที่ออกทั้งหมด', flex: 1, valueGetter: (value: Invoice[]) => formatter.number(value.length) },
     {
