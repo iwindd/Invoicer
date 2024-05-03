@@ -238,8 +238,8 @@ export const upsertInvoice = async (payload: {
       code: v4(),
       note: payload.note,
       items: JSON.stringify(payload.items),
-      start: dayjs(payload.start).toDate(),
-      end: dayjs(payload.end).toDate(),
+      start: dayjs(payload.start).startOf("day").toDate(),
+      end: dayjs(payload.end).endOf("day").toDate(),
       createdById: session?.user.uid as number,
       ownerId: payload.owner,
       status: 0
