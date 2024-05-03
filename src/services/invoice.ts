@@ -53,7 +53,7 @@ export const getInvoices = async (table: TableFetch, id: number) => {
           },
         }
       }),
-      Prisma.invoice.count(),
+      Prisma.invoice.count({ where: { ownerId: id } }),
     ])
 
     return {
