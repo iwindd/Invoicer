@@ -8,7 +8,8 @@ async function main() {
     password: await bcrypt.hash("12341234", 16),
     email: "superadmin@gmail.com",
     permission: 1,
-    isDeleted: false
+    isDeleted: false,
+    canRemove: false
   };
 
   await prisma.user.upsert({

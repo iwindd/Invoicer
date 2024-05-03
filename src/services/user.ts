@@ -87,7 +87,7 @@ export const deleteAdmin = async (id: number) => {
 
     if (session?.user.uid == id) return { state: false }
     const admin = await Prisma.user.update({
-      where: { id: id },
+      where: { id: id, canRemove: true },
       data: { isDeleted: true }
     })
 
