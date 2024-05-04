@@ -7,8 +7,8 @@ import { v4 } from 'uuid';
 import { getServerSession } from "@/libs/session";
 import { z } from "zod";
 import { extname, join } from "path";
-import sharp from "sharp";
 import { Activity } from "@/libs/activity";
+import fs from "fs";
 import { push } from "@/libs/line";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
@@ -344,15 +344,17 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
 
     if (!validate.success) return { state: false }
     const image = data.image as File;
-    const fileName = id + v4() + "." + extname(image.name);
+    const fileName = id + v4() + "." + extname(image.name).toUpperCase();
     const uploadDir = join(process.cwd(), 'public', 'uploads');
     const filePath = join(uploadDir, fileName);
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes)
-    await sharp(buffer)
+
+    fs.writeFile(filePath, buffer, () => {});
+/*     await sharp(buffer)
       .jpeg({ quality: 5 })
       .png({ compressionLevel: 9 })
-      .toFile(filePath)
+      .toFile(filePath) */
 
     const invoice = await Prisma.invoice.update({
       where: { id: id },
