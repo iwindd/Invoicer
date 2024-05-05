@@ -344,17 +344,13 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
 
     if (!validate.success) return { state: false }
     const image = data.image as File;
-    const fileName = id + v4() + "." + extname(image.name).toUpperCase();
+    const fileName = id + v4() + extname(image.name).toUpperCase();
     const uploadDir = join(process.cwd(), 'public', 'uploads');
     const filePath = join(uploadDir, fileName);
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes)
 
     fs.writeFile(filePath, buffer, () => {});
-/*     await sharp(buffer)
-      .jpeg({ quality: 5 })
-      .png({ compressionLevel: 9 })
-      .toFile(filePath) */
 
     const invoice = await Prisma.invoice.update({
       where: { id: id },

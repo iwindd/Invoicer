@@ -176,7 +176,7 @@ const ViewDialog = ({ onClose, onOpen, open, invoice }: ViewDialogProps) => {
                 <Stack sx={{ width: '100%', height: '100%', overflow: 'hidden', px: 2 }} gap={2} >
                   <Stack style={{ width: 'auto', height: 610, overflow: 'scroll' }} >
                     <Image
-                      src={`/uploads/${invoice.image}`}
+                      src={`/api/image/${invoice.image}`}
                       alt="Receipt"
                       width={500}
                       height={500}
