@@ -108,7 +108,7 @@ const Datagrid = () => {
 
         if (resp && resp.state) {
           enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
-          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+          await queryClient.refetchQueries({ queryKey: ['invoicesall'], type: 'active' })
         } else {
           enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
         }
@@ -131,7 +131,7 @@ const Datagrid = () => {
 
         if (resp && resp.state) {
           enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
-          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+          await queryClient.refetchQueries({ queryKey: ['invoicesall'], type: 'active' })
         } else {
           enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
         }
