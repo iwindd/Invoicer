@@ -164,6 +164,8 @@ const Datagrid = () => {
       <ViewDialog onClose={viewDialog.handleClose} onOpen={viewDialog.handleOpen} open={viewDialog.open} invoice={invoice} />
       <EditDialog onClose={editDialog.handleClose} onOpen={editDialog.handleOpen} open={editDialog.open} invoice={invoice} />
       <Confirmation {...cancelConfirm.props} />
+      <Confirmation {...paymentConfirm.props} />
+      <Confirmation {...denypaymentConfirm.props} />
     </>
 
   )
