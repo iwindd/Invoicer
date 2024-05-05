@@ -106,7 +106,10 @@ export const getInvoicesAll = async (table: TableFetch) => {
         skip: table.pagination.page * table.pagination.pageSize,
         orderBy: formatter.order(table.sort),
         where: {
-          ...filter
+          ...filter,
+          NOT: {
+            status: -1
+          }
         },
         select: {
           id: true,
