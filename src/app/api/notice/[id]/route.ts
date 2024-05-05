@@ -1,5 +1,6 @@
 
 import { InvoiceItem, getNoticeInvoice } from "@/services/invoice";
+import dayjs from "dayjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
@@ -8,7 +9,12 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
   return NextResponse.json({
     account: invoices.account,
-    invoice: invoices.state ? (invoices.data.filter(i => i.status == 0 || i.status == 2).length > 0) : false,
+    invoice: invoices.state ? (
+      invoices.data.filter(i => (i.status == 0) || (i.status == 2 && dayjs().isAfter(dayjs(i.end).endOf('day')))).length > 0
+    ) : false,
+
+
+
     invoices: invoices.data.map(invoice => {
       const items = JSON.parse(invoice.items as string) as InvoiceItem[];
       return {
