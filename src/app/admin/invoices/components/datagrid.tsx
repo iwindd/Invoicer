@@ -1,11 +1,11 @@
 "use client"
 import Datatable from '@/components/datatable'
-import { CancelTwoTone, EditTwoTone, PeopleTwoTone, PrintTwoTone, ViewAgenda } from '@mui/icons-material';
+import { CancelTwoTone, CreditCardTwoTone, EditTwoTone, PeopleTwoTone, PrintTwoTone, ViewAgenda } from '@mui/icons-material';
 import { GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import { Customers, Invoice } from '@prisma/client';
 import * as formatter from '@/libs/formatter';
 import React from 'react'
-import { InvoiceItem, getInvoicesAll, setInvoiceCancel } from '@/services/invoice';
+import { InvoiceItem, getInvoicesAll, setInvoiceCancel, setInvoicePaymentStatus } from '@/services/invoice';
 import { condition } from '@/libs/utils';
 import { paths } from '@/paths';
 import { Tooltip } from '@mui/material';
@@ -23,7 +23,9 @@ import { useQueryClient } from '@tanstack/react-query';
 
 const columns = (actions: {
   edit: (row: InvoiceView) => any,
-  cancel: (row: Invoice) => any
+  cancel: (row: Invoice) => any,
+  payment: (row: Invoice) => any,
+  denypayment: (row: Invoice) => any
 }): GridColDef[] => {
   return [
     { field: 'status', filterable: true, headerName: 'สถานะ', flex: 1, valueGetter: (_, row: Invoice) => formatter.invoice_(row) },
@@ -46,6 +48,11 @@ const columns = (actions: {
           [
             <GridActionsCellItem key="edit" icon={<EditTwoTone />} label="แก้ไข" onClick={(actions.edit(row as InvoiceView))} showInMenu />,
             <GridActionsCellItem key="delete" icon={<CancelTwoTone />} label="ยกเลิกบิล" onClick={(actions.cancel(row))} showInMenu />,
+            <GridActionsCellItem key="payment" icon={<CreditCardTwoTone />} label="ชำระบิลแล้ว" onClick={(actions.payment(row))} showInMenu />,
+          ]
+        ) : row.status == 1 ? (
+          [
+            <GridActionsCellItem key="denypayment" icon={<CreditCardTwoTone />} label="ยกเลิกการชำระบิล" onClick={(actions.denypayment(row))} showInMenu />,
           ]
         ) : [])
       ],
@@ -90,9 +97,57 @@ const Datagrid = () => {
     }
   })
 
+  const paymentConfirm = useConfirm<HTMLElement>({
+    title: "แจ้งเตือน",
+    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    onConfirm: async (id: string) => {
+      setBackdrop(true);
+
+      try {
+        const resp = await setInvoicePaymentStatus(Number(id), 1);
+
+        if (resp && resp.state) {
+          enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
+          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+        } else {
+          enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
+        }
+      } catch (error) {
+        enqueueSnackbar("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่ภายหลัง", { variant: "error" });
+      } finally {
+        setBackdrop(false);
+      }
+    }
+  })
+
+  const denypaymentConfirm = useConfirm<HTMLElement>({
+    title: "แจ้งเตือน",
+    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    onConfirm: async (id: string) => {
+      setBackdrop(true);
+
+      try {
+        const resp = await setInvoicePaymentStatus(Number(id), 0);
+
+        if (resp && resp.state) {
+          enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
+          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+        } else {
+          enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
+        }
+      } catch (error) {
+        enqueueSnackbar("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่ภายหลัง", { variant: "error" });
+      } finally {
+        setBackdrop(false);
+      }
+    }
+  })
+
   const actions = {
     edit: React.useCallback((data: InvoiceView) => () => { setInvoice(data); editDialog.handleOpen(); }, [setInvoice, editDialog]),
-    cancel: React.useCallback((data: Invoice) => () => { cancelConfirm.with(data.id); cancelConfirm.handleOpen(); }, [cancelConfirm])
+    cancel: React.useCallback((data: Invoice) => () => { cancelConfirm.with(data.id); cancelConfirm.handleOpen(); }, [cancelConfirm]),
+    payment: React.useCallback((data: Invoice) => () => { paymentConfirm.with(data.id); paymentConfirm.handleOpen(); }, [paymentConfirm]),
+    denypayment: React.useCallback((data: Invoice) => () => { denypaymentConfirm.with(data.id); denypaymentConfirm.handleOpen(); }, [denypaymentConfirm]),
   }
 
   return (
