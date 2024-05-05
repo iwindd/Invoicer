@@ -65,7 +65,11 @@ export const text = (text: string | undefined, replacer: string = "-") => {
 }
 
 export const order = (sort: GridSortModel) => {
-  const orderBy: Record<any, SortDirection>[] = [];
+  const orderBy: Record<any, SortDirection>[] = [
+    {
+      id: "desc"
+    }
+  ];
 
   sort.map((sort) => {
     orderBy.unshift({
