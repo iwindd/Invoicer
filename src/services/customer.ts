@@ -4,7 +4,7 @@ import { TableFetch } from "./type";
 import * as formatter from '@/libs/formatter';
 import { Inputs } from "@/app/admin/customers/schema";
 import { getServerSession } from "@/libs/session";
-import dayjs from '@/libs/dayjs';
+import dayjs, { Dayjs } from '@/libs/dayjs';
 import { revalidatePath } from "next/cache";
 import { paths } from "@/paths";
 import { push } from "@/libs/line";
@@ -32,7 +32,7 @@ export const getCustomers = async (table: TableFetch) => {
           lastname: true,
           id: true,
           email: true,
-          createdAt: true,
+          joinedAt: true,
 
           createdBy: {
             select: {
@@ -94,14 +94,15 @@ export const getCustomer = async (id: number) => {
   }
 }
 
-export const upsertCustomer = async (payload: Inputs, id?: number) => {
+export const upsertCustomer = async (payload: Inputs, id?: number, joined?: Dayjs | null) => {
   try {
     const session = await getServerSession();
     const data = {
       firstname: payload.firstname,
       lastname: payload.lastname,
       email: payload.email,
-      createdById: session?.user.uid as number
+      createdById: session?.user.uid as number,
+      joinedAt: dayjs(joined || dayjs().toDate()).toDate()
     }
 
     const customer = await Prisma.customers.upsert({
@@ -112,7 +113,8 @@ export const upsertCustomer = async (payload: Inputs, id?: number) => {
       update: {
         firstname: data.firstname,
         lastname: data.lastname,
-        email: data.email
+        email: data.email,
+        joinedAt: data.joinedAt
       },
     })
 

@@ -40,6 +40,7 @@ model Customers {
 
   isDeleted Boolean @default(false)
 
+  joinedAt DateTime @default(now())
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

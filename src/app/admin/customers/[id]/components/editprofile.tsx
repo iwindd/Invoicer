@@ -13,6 +13,8 @@ import { upsertCustomer } from '@/services/customer';
 import { useSnackbar } from 'notistack';
 import { useQueryClient } from '@tanstack/react-query';
 import LineController from './line';
+import dayjs, { Dayjs } from '@/libs/dayjs';
+import { DatePicker } from '@mui/x-date-pickers';
 
 interface EditProfileProps {
   customer: Customers
@@ -23,6 +25,7 @@ const EditProfile = ({ customer }: EditProfileProps) => {
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+  const [joined, setJoined] = React.useState<Dayjs | null>(dayjs(customer.joinedAt));
 
   const confirmation = useConfirm({
     title: "แจ้งเตือน",
@@ -30,7 +33,7 @@ const EditProfile = ({ customer }: EditProfileProps) => {
     onConfirm: async (data: Inputs) => {
       try {
         setBackdrop(true);
-        const resp = await upsertCustomer(data, customer.id)
+        const resp = await upsertCustomer(data, customer.id, joined)
 
         if (resp.state) {
           enqueueSnackbar("แก้ไขผู้ใช้สำเร็จ!", { variant: 'success' });
@@ -106,6 +109,15 @@ const EditProfile = ({ customer }: EditProfileProps) => {
                 disabled={!isEdit}
               />
             </Grid>
+            <Grid sm={12} md={6} lg={3}>
+              <DatePicker
+                label="วันที่เข้าร่วม"
+                disabled={!isEdit}
+                value={joined}
+                onChange={(newValue) => setJoined(newValue)}
+                sx={{ width: '100%' }}
+              />
+            </Grid>
           </Grid>
           <Divider />
           <CardActions sx={{ justifyContent: 'flex-end' }}>
@@ -147,7 +159,7 @@ const EditProfile = ({ customer }: EditProfileProps) => {
             }
           </CardActions>
         </form>
-      </Card>
+      </Card >
       <Confirmation {...confirmation.props} />
     </>
   )

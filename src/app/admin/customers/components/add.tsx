@@ -10,6 +10,8 @@ import { AddTwoTone } from '@mui/icons-material';
 import { useDialog } from '@/hooks/use-dialog';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { upsertCustomer } from '@/services/customer';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs, { Dayjs } from '@/libs/dayjs';
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -18,6 +20,7 @@ export interface AddDialogProps {
 
 function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const [isLoading, setLoading] = React.useState<boolean>(false);
+  const [joined, setJoined] = React.useState<Dayjs | null>(dayjs());
   const { enqueueSnackbar } = useSnackbar()
   const queryClient = useQueryClient()
 
@@ -32,7 +35,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const onSubmit = async (payload: Inputs) => {
     if (isLoading) return
     setLoading(true);
-    const resp = await upsertCustomer(payload);
+    const resp = await upsertCustomer(payload, undefined, joined);
 
     if (resp.state) {
       onClose()
@@ -70,8 +73,6 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
           <Grid container sx={{ mt: 2 }} rowGap={1}>
             <Grid lg={6} sm={6} sx={{ px: 0.5 }}>
               <TextField
-                type="text"
-                label="ชื่อ"
                 autoFocus
                 error={errors['firstname']?.message != undefined ? true : false}
                 helperText={errors['firstname']?.message}
@@ -100,6 +101,15 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
                 {...register("email")}
                 disabled={isLoading}
                 fullWidth
+              />
+            </Grid>
+            <Grid lg={12} sm={12} sx={{ px: 0.5 }}>
+              <DatePicker
+                label="วันที่เข้าร่วม"
+                disabled={isLoading}
+                value={joined}
+                onChange={(newValue) => setJoined(newValue)}
+                sx={{ width: '100%' }}
               />
             </Grid>
           </Grid>

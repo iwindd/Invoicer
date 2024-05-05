@@ -18,7 +18,7 @@ const columns = (menu: {
   onDelete: (data: Customers) => any;
 }): GridColDef[] => {
   return [
-    { field: 'createdAt', headerName: 'วันที่เพิ่ม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
+    { field: 'joinedAt', headerName: 'วันที่เข้าร่วม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
     { field: 'firstname', headerName: 'ชื่อ', flex: 1, valueGetter: (_, row: Customers) => formatter.text(`${row.firstname} ${row.lastname}`)},
     { field: 'email', headerName: 'อีเมล', flex: 1 },
     { field: 'Invoice', headerName: 'กำลังดำเนินการ', flex: 1, valueGetter: (value: Invoice[]) => formatter.number(value.length) },
