@@ -107,9 +107,15 @@ export const getInvoicesAll = async (table: TableFetch) => {
         orderBy: formatter.order(table.sort),
         where: {
           ...filter,
-          NOT: {
-            status: -1
-          }
+          ...(
+            table.filter.items.find((i: any) => i.field == "status") ? ({}) : (
+              {
+                NOT: {
+                  status: -1
+                }
+              }
+            )
+          )
         },
         select: {
           id: true,
@@ -353,7 +359,7 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
     const bytes = await image.arrayBuffer();
     const buffer = Buffer.from(bytes)
 
-    fs.writeFile(filePath, buffer, () => {});
+    fs.writeFile(filePath, buffer, () => { });
 
     const invoice = await Prisma.invoice.update({
       where: { id: id },
