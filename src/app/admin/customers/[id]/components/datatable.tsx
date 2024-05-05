@@ -1,13 +1,13 @@
 "use client";
 import Datagrid from '@/components/datatable';
-import { InvoiceItem, getInvoices, setInvoiceCancel } from '@/services/invoice';
+import { InvoiceItem, getInvoices, setInvoiceCancel, setInvoicePaymentStatus } from '@/services/invoice';
 import { GridActionsCellItem, GridColDef } from '@mui/x-data-grid';
 import * as formatter from '@/libs/formatter'
 import React from 'react'
 import { condition } from '@/libs/utils';
 import { useParams } from 'next/navigation';
 import { Invoice } from '@prisma/client';
-import { CancelTwoTone, EditTwoTone, PrintTwoTone, ViewAgenda } from '@mui/icons-material';
+import { CancelTwoTone, CreditCardTwoTone, EditTwoTone, PrintTwoTone, ViewAgenda } from '@mui/icons-material';
 import { useDialog } from '@/hooks/use-dialog';
 import ViewDialog from '../../../invoices/components/view';
 import { Confirmation, useConfirm } from '@/hooks/use-confirm';
@@ -22,6 +22,8 @@ import GridLinkAction from '@/components/GridLinkAction';
 const colomns = (actions: {
   edit: (row: InvoiceView) => any,
   cancel: (row: Invoice) => any
+  payment: (row: Invoice) => any
+  denypayment: (row: Invoice) => any
 }): GridColDef[] => [
     { field: 'status', headerName: 'สถานะ', flex: 1, valueGetter: (_, row: Invoice) => formatter.invoice_(row) },
     { field: 'note', headerName: 'หมายเหตุ', flex: 1, valueGetter: (note: string) => formatter.text(note) },
@@ -41,6 +43,12 @@ const colomns = (actions: {
           [
             <GridActionsCellItem key="edit" icon={<EditTwoTone />} label="แก้ไข" onClick={(actions.edit(row as InvoiceView))} showInMenu />,
             <GridActionsCellItem key="delete" icon={<CancelTwoTone />} label="ยกเลิกบิล" onClick={(actions.cancel(row))} showInMenu />,
+            <GridActionsCellItem key="payment" icon={<CreditCardTwoTone />} label="ชำระบิลแล้ว" onClick={(actions.payment(row))} showInMenu />,
+          ]
+        ) : row.status == 1 ? (
+          [
+            <GridActionsCellItem key="denypayment" icon={<CreditCardTwoTone />} label="ยกเลิกการชำระบิล" onClick={(actions.denypayment(row))} showInMenu />,
+
           ]
         ) : [])
       ],
@@ -60,10 +68,10 @@ const Datatable = () => {
     text: "คุณต้องการที่จะยกเลิกบิลนี้หรือไม่?",
     onConfirm: async (id: string) => {
       setBackdrop(true);
-  
+
       try {
         const resp = await setInvoiceCancel(Number(id));
-  
+
         if (resp && resp.state) {
           enqueueSnackbar("ยกเลิกบิลแล้ว!", { variant: 'success' });
           await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
@@ -78,13 +86,62 @@ const Datatable = () => {
     }
   })
 
+  const paymentConfirm = useConfirm<HTMLElement>({
+    title: "แจ้งเตือน",
+    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    onConfirm: async (id: string) => {
+      setBackdrop(true);
+
+      try {
+        const resp = await setInvoicePaymentStatus(Number(id), 1);
+
+        if (resp && resp.state) {
+          enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
+          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+        } else {
+          enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
+        }
+      } catch (error) {
+        enqueueSnackbar("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่ภายหลัง", { variant: "error" });
+      } finally {
+        setBackdrop(false);
+      }
+    }
+  })
+
+  const denypaymentConfirm = useConfirm<HTMLElement>({
+    title: "แจ้งเตือน",
+    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    onConfirm: async (id: string) => {
+      setBackdrop(true);
+
+      try {
+        const resp = await setInvoicePaymentStatus(Number(id), 0);
+
+        if (resp && resp.state) {
+          enqueueSnackbar("เปลี่ยนสถานะสำเร็จ!", { variant: 'success' });
+          await queryClient.refetchQueries({ queryKey: ['invoices'], type: 'active' })
+        } else {
+          enqueueSnackbar("ยกเลิกบิลไม่สำเร็จ กรุณาลองอีกครั้งภายหลัง", { variant: "error" });
+        }
+      } catch (error) {
+        enqueueSnackbar("มีข้อผิดพลาดเกิดขึ้น กรุณาลองใหม่ภายหลัง", { variant: "error" });
+      } finally {
+        setBackdrop(false);
+      }
+    }
+  })
+
+
   const onView = ({ row }: { row: InvoiceView }) => {
     setInvoice(row); viewDialog.handleOpen();
   }
 
   const actions = {
     edit: React.useCallback((data: InvoiceView) => () => { setInvoice(data); editDialog.handleOpen(); }, [setInvoice, editDialog]),
-    cancel: React.useCallback((data: Invoice) => () => { cancelConfirm.with(data.id); cancelConfirm.handleOpen(); }, [cancelConfirm])
+    cancel: React.useCallback((data: Invoice) => () => { cancelConfirm.with(data.id); cancelConfirm.handleOpen(); }, [cancelConfirm]),
+    payment: React.useCallback((data: Invoice) => () => { paymentConfirm.with(data.id); paymentConfirm.handleOpen(); }, [paymentConfirm]),
+    denypayment: React.useCallback((data: Invoice) => () => { denypaymentConfirm.with(data.id); denypaymentConfirm.handleOpen(); }, [denypaymentConfirm]),
   }
 
   return (
@@ -102,6 +159,8 @@ const Datatable = () => {
       <ViewDialog onClose={viewDialog.handleClose} onOpen={viewDialog.handleOpen} open={viewDialog.open} invoice={invoice} />
       <EditDialog onClose={editDialog.handleClose} onOpen={editDialog.handleOpen} open={editDialog.open} invoice={invoice} />
       <Confirmation {...cancelConfirm.props} />
+      <Confirmation {...paymentConfirm.props} />
+      <Confirmation {...denypaymentConfirm.props} />
     </>
   )
 }
