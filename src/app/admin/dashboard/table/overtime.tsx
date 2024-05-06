@@ -25,7 +25,7 @@ export interface OvertimeInvoiceProps {
   invoices?: {
     id: number,
     note: string,
-    end: Dayjs,
+    end: Date,
     owner: { firstname: string, lastname: string }
   }[];
   sx?: SxProps;

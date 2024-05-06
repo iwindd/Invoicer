@@ -39,13 +39,13 @@ const Dashboard = async () => {
   //stats
   const stats = {
     near: invoices.filter(i => i.status != 2 && i.status != -1 && i.status != 1 && dayjs().isAfter(dayjs(i.end).subtract(7, 'day')) && dayjs().isBefore(dayjs(i.end))),
-    checking: invoices.filter(i => i.status == 2),
-    overtime: invoices.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))),
-    progress: invoices.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))),
+    checking: invoices.filter(i => i.status == 2).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
+    overtime: invoices.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
+    progress: invoices.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
     pending: invoices.filter(i => i.status == 0 && dayjs().isBefore(dayjs(i.start))),
-    success: invoices.filter(i => i.status == 1),
-    canceled: invoices.filter(i => i.status == -1),
-    total: invoices,
+    success: invoices.filter(i => i.status == 1).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
+    canceled: invoices.filter(i => i.status == -1).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
+    total: invoices.map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() }))
   }
 
   //data
