@@ -12,10 +12,10 @@ import dayjs from '@/libs/dayjs';
 import EditProfile from './components/editprofile';
 import { notFound } from 'next/navigation';
 import ApiController from './components/api';
-import { TotalInvoice } from './components/stats/total';
-import { TotalSuccessInvoice } from './components/stats/success';
-import { TotalProgressInvoice } from './components/stats/progress';
-import { TotalFailInvoice } from './components/stats/fail';
+import { TotalInvoice } from '../../dashboard/stats/total';
+import { TotalSuccessInvoice } from '../../dashboard/stats/success';
+import { TotalProgressInvoice } from '../../dashboard/stats/progress';
+import { TotalFailInvoice } from '../../dashboard/stats/fail';
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const customer = await getCustomer(Number(params.id));
@@ -47,16 +47,16 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
         </Stack>
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(analysis.data.length)} รายการ`} />
+        <TotalInvoice sx={{ height: '100%' }} value={`${formatter.number(analysis.data.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalSuccessInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.success.length)} รายการ`} />
+        <TotalSuccessInvoice sx={{ height: '100%' }} value={`${formatter.number(stats.success.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalProgressInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.pending.length)} รายการ`} />
+        <TotalProgressInvoice sx={{ height: '100%' }} value={`${formatter.number(stats.pending.length)} รายการ`} />
       </Grid>
       <Grid lg={3} sm={6} xs={12}>
-        <TotalFailInvoice id={Number(params.id)} sx={{ height: '100%' }} value={`${formatter.number(stats.fail.length)} รายการ`} />
+        <TotalFailInvoice sx={{ height: '100%' }} value={`${formatter.number(stats.fail.length)} รายการ`} />
       </Grid>
       <Grid lg={12} md={12} xs={12}>
         <Datatable />
