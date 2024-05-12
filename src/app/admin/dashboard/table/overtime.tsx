@@ -10,7 +10,7 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import type { SxProps } from '@mui/material/styles';
-import dayjs, { Dayjs } from '@/libs/dayjs';
+import dayjs from '@/libs/dayjs';
 import { ArrowRightTwoTone, MenuTwoTone, ReceiptTwoTone } from '@mui/icons-material';
 import { ListItemIcon } from '@mui/material';
 import * as formatter from '@/libs/formatter'

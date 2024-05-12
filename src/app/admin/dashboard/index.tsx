@@ -17,7 +17,7 @@ import Prisma from '@/libs/prisma'
 import dayjs from '@/libs/dayjs'
 
 const Dashboard = async () => {
-  const payload = await Prisma.invoice.findMany({
+  const invoices = await Prisma.invoice.findMany({
     include: {
       owner: {
         select: {
@@ -28,26 +28,18 @@ const Dashboard = async () => {
     }
   });
 
-  const invoices = payload.map((invoice) => {
-    return {
-      ...invoice,
-      start: dayjs(invoice.start).startOf('day'),
-      end: dayjs(invoice.end).endOf('day')
-    }
-  })
-
   //stats
   const stats = {
     near: invoices.filter(i => i.status != 2 && i.status != -1 && i.status != 1 && dayjs().isAfter(dayjs(i.end).subtract(7, 'day')) && dayjs().isBefore(dayjs(i.end))),
-    checking: invoices.filter(i => i.status == 2).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
-    overtime: invoices.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
-    progress: invoices.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
+    checking: invoices.filter(i => i.status == 2),
+    overtime: invoices.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))),
+    progress: invoices.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))),
     pending: invoices.filter(i => i.status == 0 && dayjs().isBefore(dayjs(i.start))),
-    success: invoices.filter(i => i.status == 1).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
-    canceled: invoices.filter(i => i.status == -1).map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() })),
-    total: invoices.map(i => ({ ...i, start: i.start.toDate(), end: i.end.toDate() }))
+    success: invoices.filter(i => i.status == 1),
+    canceled: invoices.filter(i => i.status == -1),
+    total: invoices,
   }
-
+  
   //data
   const monthsData = Array.from({ length: 12 }, (_, i) => i + 1);
   const thisYear = invoices.filter(i => dayjs(i.createdAt).isBetween(dayjs().startOf('year'), dayjs().endOf('year')));

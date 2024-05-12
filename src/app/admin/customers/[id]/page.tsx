@@ -26,19 +26,11 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
 
   const data = customer.data as Customers
 
-  const invoices = analysis.data.map((invoice) => {
-    return {
-      ...invoice,
-      start: dayjs(invoice.start).startOf('day'),
-      end: dayjs(invoice.end).endOf('day')
-    }
-  })
-
   const stats = {
-    success: invoices.filter(i => i.status == 1),
-    cancel: invoices.filter(i => i.status == -1),
-    pending: invoices.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))),
-    fail: invoices.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))),
+    success: analysis.data.filter(i => i.status == 1),
+    cancel: analysis.data.filter(i => i.status == -1),
+    pending: analysis.data.filter(i => i.status == 0 && dayjs().isBetween(dayjs(i.start), dayjs(i.end))),
+    fail: analysis.data.filter(i => i.status == 0 && dayjs().isAfter(dayjs(i.end))),
   }
 
   return (
