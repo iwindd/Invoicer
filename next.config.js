@@ -3,6 +3,9 @@ const nextConfig = {
   experimental: {
     serverActions: true
   },
+  images: {
+    unoptimized: true,
+  },
   async headers() {
     return [
       {
