@@ -8,14 +8,16 @@ import { paths } from '@/paths';
 export interface TotalFailInvoiceProps {
   sx?: SxProps;
   value: string;
+  id: number
 }
 
-export function TotalFailInvoice({ value, sx }: TotalFailInvoiceProps): React.JSX.Element {
+export function TotalFailInvoice({ value, sx, id }: TotalFailInvoiceProps): React.JSX.Element {
+
   return (
     <Link
       underline="none"
       component={RouterLink}
-      href={`${paths.admin.invoice}?fStatus=4`}
+      href={`${paths.admin.customers}/${id}?fStatus=4`}
     >
       <Card sx={sx}>
         <CardContent>

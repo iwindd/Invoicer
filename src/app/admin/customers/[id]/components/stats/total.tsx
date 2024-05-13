@@ -1,33 +1,34 @@
-import { TimerTwoTone } from '@mui/icons-material';
+import { paths } from '@/paths';
+import { AllInboxTwoTone } from '@mui/icons-material';
 import { Avatar, Card, CardContent, Link, Stack, Typography } from '@mui/material';
 import type { SxProps } from '@mui/material/styles';
 import * as React from 'react';
 import RouterLink from 'next/link';
-import { paths } from '@/paths';
 
-export interface TotalFailInvoiceProps {
+export interface TotalInvoiceProps {
   sx?: SxProps;
   value: string;
+  id: number
 }
 
-export function TotalFailInvoice({ value, sx }: TotalFailInvoiceProps): React.JSX.Element {
+export function TotalInvoice({ value, sx, id }: TotalInvoiceProps): React.JSX.Element {
   return (
     <Link
       underline="none"
       component={RouterLink}
-      href={`${paths.admin.invoice}?fStatus=4`}
+      href={`${paths.admin.customers}/${id}`}
     >
       <Card sx={sx}>
         <CardContent>
           <Stack direction="row" sx={{ alignItems: 'flex-start', justifyContent: 'space-between' }} spacing={3}>
             <Stack spacing={1}>
               <Typography color="text.secondary" variant="overline">
-                บิลที่เลยกำหนด
+                บิลทั้งหมด
               </Typography>
               <Typography variant="h4">{value}</Typography>
             </Stack>
-            <Avatar sx={{ backgroundColor: 'var(--mui-palette-error-main)', height: '56px', width: '56px' }}>
-              <TimerTwoTone />
+            <Avatar sx={{ backgroundColor: 'var(--mui-palette-primary-main)', height: '56px', width: '56px' }}>
+              <AllInboxTwoTone />
             </Avatar>
           </Stack>
         </CardContent>
