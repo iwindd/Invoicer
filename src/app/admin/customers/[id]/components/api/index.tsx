@@ -28,6 +28,12 @@ const ApiDialog = ({ onClose, open }: ApiDialogProps) => {
       <DialogContent >
         <Stack sx={{ mt: 2 }}>
           <Stack>
+            <Typography variant='h6'>SCRIPT :</Typography>
+            <Highlight>
+              {`<script src="${getSiteURL()}api/script/${id}"></script>`}
+            </Highlight>
+          </Stack>
+          <Stack>
             <Typography variant='h6'>IFRAME :</Typography>
             <Highlight>
               {getSiteURL()}notice/{id}
