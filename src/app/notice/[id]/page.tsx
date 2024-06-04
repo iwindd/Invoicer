@@ -22,15 +22,24 @@ const Notice = async ({ params }: { params: { id: string } }) => {
       justifyContent={"center"}
     >
       <Stack sx={{mb: 20}}>
-        <Stack spacing={3} sx={{ px: 10, pt: 10 }} alignItems={"center"}>
-          <Typography align="center" variant="h1" noWrap>
+        <Stack spacing={3} sx={{ pt: 5 }} alignItems={"center"}>
+          <Typography 
+            align="center" 
+            variant="h1" 
+            sx={{ typography: { 
+              lg: 'h1', 
+              md: 'h1', 
+              sm: 'h3',
+              xs: 'h4'
+            }}}
+          >
             {noreport.length > 0
               ? "โปรดตรวจสอบค่าบริการที่ต้องชำระ"
               : "กำลังรอแอดมินตรวจสอบค่าบริการ"}
           </Typography>
           {noreport.length > 0 && (
             <>
-              <Typography align="center" variant="h6" noWrap>
+              <Typography align="center" variant="h6" >
                 กรุณาชำระบริการก่อนวันที่ {date2(invoices[0].end)}
               </Typography>
               <Stack width={"fit-content"} sx={{ mb: 10 }}>
@@ -44,7 +53,7 @@ const Notice = async ({ params }: { params: { id: string } }) => {
         </Stack>
         {noreport.length > 0 && (
           <Stack alignItems={"center"}>
-            <Typography variant="caption" sx={{ mt: 2 }}>
+            <Typography textAlign={"center"} variant="caption" sx={{ mt: 2 }}>
               บริษัทฯ ขออภัยหากท่านได้ชำระค่าบริการดังกล่าวแล้ว
               ลองอีกครั้งในภายหลัง
             </Typography>

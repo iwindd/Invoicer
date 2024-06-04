@@ -33,6 +33,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       const content = document.createElement("div");
       content.style.margin = "auto";
       content.style.padding = "10px";
+      content.style.boxSizing = "border-box";
       content.style.border = "1px solid #888";
       content.style.width = "65%";
       content.style.height = "80%";
@@ -42,8 +43,8 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 
       const close = document.createElement("span");
       close.innerHTML = "&times;";
-      close.style.color = "#aaaaaa";
-      close.style.fontSize = "28px";
+      close.style.color = "#e64e4e";
+      close.style.fontSize = "5em";
       close.style.fontWeight = "bold";
       close.style.marginLeft = "auto";
       close.style.cursor = "pointer";
@@ -57,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       iframe.style.border = 0;
       iframe.setAttribute(
         "src",
-        \`https://payment.flowmisite.com/notice/${id}\`
+        \`http://localhost:3000/notice/${id}\`
       );
       iframe.setAttribute("scrolling", "no");
 
@@ -66,6 +67,23 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
         document.cookie = \`__payment_delay=\${date.toISOString()}; path=/\`
         container.style.display = "none"
       }
+
+      function reSm(x) {
+        if (x.matches) { // If media query matches
+          content.style.width = "100%";
+          content.style.height = "100%";
+          container.style.paddingTop = "0px";
+        } else {
+          content.style.width = "65%";
+          content.style.height = "80%";
+          container.style.paddingTop = "100px";
+        }
+      }
+
+      var sm = window.matchMedia("(max-width: 900px)")
+
+      reSm(sm); // Call listener function at run time
+      sm.addEventListener("change", function() { reSm(sm); });
 
       wrapper.appendChild(iframe);
       content.appendChild(close);
