@@ -5,7 +5,7 @@ import { NextRequest } from "next/server";
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   const { id } = params;
-  
+
   const invoices = await getNoticeInvoice(Number(id));
   const data = {
     invoice: invoices.state ? (
@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       iframe.style.border = 0;
       iframe.setAttribute(
         "src",
-        \`http://localhost:3000/notice/${id}\`
+        \`${req.nextUrl.origin}/notice/${id}\`
       );
       iframe.setAttribute("scrolling", "no");
 
