@@ -28,7 +28,9 @@ export const ParseActivity = async (payload: ActivityPayload) => {
 }
 
 export function getSiteURL(): string {
+  if (typeof window === 'undefined') return "";
   let url = window.location.origin;
-  url = url.endsWith('/') ? url : `${url}/`;
+  
+  url = url.endsWith("/") ? url : `${url}/`;
   return url;
 }
