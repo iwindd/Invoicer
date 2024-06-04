@@ -58,7 +58,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       iframe.style.border = 0;
       iframe.setAttribute(
         "src",
-        \`${req.nextUrl.origin}/notice/${id}\`
+        \`https://payment.flowmisite.com/notice/${id}\`
       );
       iframe.setAttribute("scrolling", "no");
 
