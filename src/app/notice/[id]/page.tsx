@@ -1,7 +1,7 @@
 import React from "react";
-import { getNoticeInvoice } from "@/services/invoice";
+import { InvoiceItem, getNoticeInvoice } from "@/services/invoice";
 import { Container, Stack, Typography } from "@mui/material";
-import { date2 } from "@/libs/formatter";
+import { date2, money } from "@/libs/formatter";
 import { PaymentController } from "./component/PaymentDialog";
 import { Invoice, Payment } from "@prisma/client";
 
@@ -14,6 +14,17 @@ const Notice = async ({ params }: { params: { id: string } }) => {
 
   const invoices = notice.data;
   const noreport = invoices.filter((i) => i.status === 0);
+
+  const total = invoices.reduce((current : number, invoice : any) => {
+    try {
+      const items = JSON.parse(invoice.items as string) as InvoiceItem[];
+      const total = items.reduce((v, i) => v + (i.amount * i.price), 0); 
+
+      return current + total;
+    } catch (error) {
+      return current + 0;
+    }
+  }, 0)
 
   return (
     <Stack
@@ -40,7 +51,7 @@ const Notice = async ({ params }: { params: { id: string } }) => {
           {noreport.length > 0 && (
             <>
               <Typography align="center" variant="h6" >
-                กรุณาชำระบริการก่อนวันที่ {date2(invoices[0].end)}
+                กรุณาชำระบริการก่อนวันที่ {date2(invoices[0].end)} จำนวน {money(total)}
               </Typography>
               <Stack width={"fit-content"} sx={{ mb: 10 }}>
                 <PaymentController
