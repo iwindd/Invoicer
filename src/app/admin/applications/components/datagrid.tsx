@@ -15,13 +15,14 @@ import GridLinkAction from '@/components/GridLinkAction';
 import { deleteAdmin } from '@/services/user';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
+import { getApplications } from '@/services/application';
 
 const columns = (menu: {
   onDelete: (data: User) => any;
 }, session: Session | null): GridColDef[] => {
   return [
-    { field: 'createdAt', headerName: 'วันที่เพิ่ม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
-    { field: 'title', headerName: 'ชื่อแอพพลิเคชั่น', flex: 1, valueGetter: (value: string) => formatter.text(value) },
+    { field: 'joinedAt', headerName: 'วันที่เข้าร่วม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
+    { field: 'firstname', headerName: 'ชื่อลูกค้า', flex: 1, valueGetter: (_, row: Customers) => formatter.text(`${row.firstname} ${row.lastname}`)},
     {
       field: 'actions',
       type: 'actions',
@@ -72,7 +73,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(Menu, session)}
         name={'applications'}
-        fetch={() => []}
+        fetch={getApplications}
         height={700}
         onDoubleClick={
           ({ row: data }: { row: User }) => router.push(`${paths.admin.applications}/${data.id}`)
