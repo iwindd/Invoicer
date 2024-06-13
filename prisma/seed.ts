@@ -9,7 +9,7 @@ async function main() {
     email: "superadmin@gmail.com",
     permission: 1,
     isDeleted: false,
-    canRemove: false
+    root: true
   };
 
   await prisma.user.upsert({

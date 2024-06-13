@@ -28,7 +28,7 @@ model User {
 
   isDeleted  Boolean @default(false)
   permission Int     @default(0)
-  canRemove Boolean @default(true)
+  root Boolean @default(true)
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt

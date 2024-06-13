@@ -63,20 +63,20 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
 
     if (id) {
       // if update permission
-      const source = await Prisma.user.findFirst({ where: { id: session?.user.uid }, select: { canRemove: true } });
+      const source = await Prisma.user.findFirst({ where: { id: session?.user.uid }, select: { root: false } });
       if (!source) throw Error("no_found_source");
 
       if (session?.user.uid != id) {
         // anti superadmin change permission of root superadmin
-        const victim = await Prisma.user.findFirst({ where: { id }, select: { canRemove: true } });
+        const victim = await Prisma.user.findFirst({ where: { id }, select: { root: false } });
         if (!victim) throw Error("no_found_victim");
 
-        if (source?.canRemove) {
-          if (!victim.canRemove) throw Error("cannot_change_permission");
+        if (!source?.root) {
+          if (victim.root) throw Error("cannot_change_permission");
         }
       } else {
         // anti root superadmin remove self permission
-        if (!source.canRemove && data.permission == 0) throw Error("cannot_change_permission");
+        if (source.root && data.permission == 0) throw Error("cannot_change_permission");
       }
     }
 
@@ -106,7 +106,7 @@ export const deleteAdmin = async (id: number) => {
 
     if (session?.user.uid == id) return { state: false }
     await Prisma.user.update({
-      where: { id: id, canRemove: true },
+      where: { id: id, root: false },
       data: { isDeleted: true }
     })
 
@@ -173,9 +173,9 @@ export const setAdminPassword = async (password: string, id: number) => {
 
     if (session?.user.uid != id) {
       // anti superadmin change password of root superadmin
-      const victim = await Prisma.user.findFirst({ where: { id: id }, select: { canRemove: true } });
+      const victim = await Prisma.user.findFirst({ where: { id: id }, select: { root: false } });
 
-      if (!victim?.canRemove) throw Error("cannot_change_password")
+      if (victim?.root) throw Error("cannot_change_password")
     }
 
     await Prisma.user.update({
