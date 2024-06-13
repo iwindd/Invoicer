@@ -15,9 +15,14 @@ import { OvertimeInvoice } from './table/overtime'
 import * as ff from '@/libs/formatter'
 import Prisma from '@/libs/prisma'
 import dayjs from '@/libs/dayjs'
+import { getServerSession } from '@/libs/session'
 
 const Dashboard = async () => {
+  const session = await getServerSession();
   const invoices = await Prisma.invoice.findMany({
+    where: {
+      application: session?.user.application
+    },
     include: {
       owner: {
         select: {
