@@ -21,6 +21,7 @@ export const getCustomers = async (table: TableFetch) => {
       Prisma.customers.findMany({
         where: {
           isDeleted: false,
+          application: (await getServerSession())?.user.application,
           ...(filter)
         },
 
@@ -72,7 +73,7 @@ export const getCustomers = async (table: TableFetch) => {
 export const getCustomer = async (id: number) => {
   try {
     const data = await Prisma.customers.findFirst({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       select: {
         id: true,
         firstname: true,
@@ -151,7 +152,7 @@ export const upsertCustomer = async (payload: Inputs, id?: number, joined?: Dayj
 export const deleteCustomer = async (id: number) => {
   try {
     await Prisma.customers.update({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       data: { isDeleted: true }
     })
 
@@ -177,7 +178,7 @@ export const lineConnect = async (id: number, lineToken: string) => {
     if (pushResp) {
       const data = await Prisma.customers.update({
         data: { lineToken },
-        where: { id }
+        where: { id, application: (await getServerSession())?.user.application, }
       })
 
       Activity({
