@@ -21,14 +21,14 @@ const Breadcrumb = () => {
 
   return (
     <Breadcrumbs separator={<NavigateNextTwoTone fontSize="small" />}>
-      <Link underline="hover" color="inherit" href="/admin/"> Invoicer </Link>
+      <Link underline="hover" color="inherit" href="/manager/"> Invoicer </Link>
 
       {pathNames.map((_, index) => {
         const pathSegments = pathNames.slice(0, index + 1);
         const path = `/${pathSegments.join('/')}`;
         const route = findRoute(pathSegments);
 
-        if (path == "/admin") return null;
+        if (path == "/manager") return null;
         if (!route) return null;
 
         const isActive = pathNames.length === pathSegments.length;
