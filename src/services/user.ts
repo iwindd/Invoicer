@@ -10,11 +10,13 @@ import { getServerSession } from "@/libs/session";
 
 export const getUsers = async (table: TableFetch) => {
   try {
+    const session = await getServerSession();
     const data = await Prisma.$transaction([
       Prisma.user.findMany({
         where: {
           isDeleted: false,
-          ...(formatter.filter(table.filter, ['firstname', 'lastname']))
+          ...(formatter.filter(table.filter, ['firstname', 'lastname'])), 
+          application: session?.user.application as number
         },
         take: table.pagination.pageSize,
         skip: table.pagination.page * table.pagination.pageSize,
@@ -30,7 +32,7 @@ export const getUsers = async (table: TableFetch) => {
           Invoice: { select: { id: true } },
         }
       }),
-      Prisma.user.count({ where: { isDeleted: false } }),
+      Prisma.user.count({ where: { isDeleted: false, application: session?.user.application as number } }),
     ])
 
     return {
@@ -107,7 +109,7 @@ export const deleteAdmin = async (id: number) => {
 
     if (session?.user.uid == id) return { state: false }
     await Prisma.user.update({
-      where: { id: id, owner: false },
+      where: { id: id, owner: false, application: session?.user.application as number },
       data: { isDeleted: true }
     })
 
@@ -124,7 +126,7 @@ export const deleteAdmin = async (id: number) => {
 export const getAdmin = async (id: number) => {
   try {
     const data = await Prisma.user.findFirst({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application as number },
       select: {
         firstname: true,
         lastname: true,
@@ -180,7 +182,7 @@ export const setAdminPassword = async (password: string, id: number) => {
     }
 
     await Prisma.user.update({
-      where: { id: id },
+      where: { id: id, application: session?.user.application as number },
       data: { password: await bcrypt.hash(password, 16) }
     })
 
