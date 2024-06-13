@@ -20,6 +20,7 @@ import { PeopleAltTwoTone } from "@mui/icons-material";
 import RouterLink from "next/link";
 import { paths } from "@/paths";
 import { notFound } from "next/navigation";
+import LoginController from "./components/login";
 
 const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
   const customers = await Prisma.customers.findFirst({
@@ -150,6 +151,7 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
             </Typography>
           </Stack>
           <>
+            <LoginController />
             <Link component={RouterLink} href={`${paths.admin.customers}/${customers.id}`}>
               <Button variant="contained" color="info" startIcon={<PeopleAltTwoTone/>}>
                 ดูรายละเอียดลูกค้า

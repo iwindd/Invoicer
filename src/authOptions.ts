@@ -3,6 +3,39 @@ import { NextAuthOptions } from "next-auth"
 import CredentialsProvider from 'next-auth/providers/credentials';
 import bcrypt from 'bcrypt';
 
+const loginWithToken = async (token: string) => {
+  try {
+    const data = await Prisma.user.findFirst({
+      where: { loginToken: token }
+    })
+
+    if (!data) return null
+    if (data.loginToken.length <= 5) return null
+
+    await Prisma.user.update({
+      where: {
+        id: data.id
+      },
+      data: {
+        loginToken: ""
+      }
+    })
+
+    return {
+      ...data,
+      id: String(data.id),
+      uid: data.id,
+      firstname: data.firstname,
+      lastname: data.lastname,
+      status: data.permission,
+      root: data.root,
+      application: data.application
+    }
+  } catch (error) {
+    return null;
+  }
+}
+
 export const authOptions = {
   pages: {
     signIn: '/auth/signin'
@@ -41,9 +74,11 @@ export const authOptions = {
       name: 'Credentials',
       credentials: {
         email: {},
-        password: {}
+        password: {},
+        token: {}
       },
       async authorize(credentials) {
+        if (credentials?.token != "--") return loginWithToken(credentials?.token as string);
         if (!credentials?.email || !credentials?.password) return null;
 
         try {

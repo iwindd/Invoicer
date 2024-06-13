@@ -22,6 +22,7 @@ model User {
   permission Int     @default(0)
   owner Boolean @default(false)
   root Boolean @default(true)
+  loginToken String @default("")
 
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt

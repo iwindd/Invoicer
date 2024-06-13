@@ -32,6 +32,7 @@ function SignIn() {
     const resp = await signIn("credentials", {
       email: payload.email,
       password: payload.password,
+      token: "--",
       redirect: false
     })
 

@@ -2,7 +2,7 @@
 import Prisma from "@/libs/prisma";
 import { getServerSession } from "@/libs/session";
 import dayjs from '@/libs/dayjs';
-import { v1 } from "uuid";
+import { v1, v4 } from "uuid";
 import bcrypt from 'bcrypt';
 import { TableFetch } from "./type";
 import * as formatter from '@/libs/formatter';
@@ -119,5 +119,29 @@ export const getApplications = async (table: TableFetch) => {
       data: [],
       total: 0
     }
+  }
+}
+
+export const signInAsApplication = async (loginId : number) => {
+  try {
+    const token = v4();
+    const user = await Prisma.user.update({
+      where: {
+        id: loginId
+      },
+      data:{ 
+        loginToken: token
+      }
+    })
+    
+    return {
+      state: true,
+      token: token,
+      email: user.email
+    }
+  } catch (error) {
+    return {
+      state: false
+    }   
   }
 }
