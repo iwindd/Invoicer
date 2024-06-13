@@ -61,9 +61,9 @@ const ApiController = () => {
     <>
       <Button
         startIcon={<ApiTwoTone />}
-        variant="contained"
+        variant="text"
         onClick={apiDialog.handleOpen}
-        color="info"
+        color="secondary"
       >
         API
       </Button>
