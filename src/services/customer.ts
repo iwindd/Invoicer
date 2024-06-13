@@ -102,7 +102,8 @@ export const upsertCustomer = async (payload: Inputs, id?: number, joined?: Dayj
       lastname: payload.lastname,
       email: payload.email,
       createdById: session?.user.uid as number,
-      joinedAt: dayjs(joined || dayjs().toDate()).toDate()
+      joinedAt: dayjs(joined || dayjs().toDate()).toDate(),
+      application: session?.user.application as number
     }
 
     const customer = await Prisma.customers.upsert({

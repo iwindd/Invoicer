@@ -32,6 +32,7 @@ model User {
 
 model Customers {
   id        Int    @id @default(autoincrement())
+  application Int
   firstname String
   lastname  String
 
@@ -53,6 +54,7 @@ model Customers {
 
 model Invoice {
   id   Int    @id @default(autoincrement())
+  application Int
   code String
 
   note  String
@@ -77,6 +79,7 @@ model Invoice {
 
 model Activity {
   id        Int      @id @default(autoincrement())
+  application Int
   user      User     @relation(fields: [source], references: [id])
   source    Int
   category  String
@@ -87,6 +90,7 @@ model Activity {
 
 model Payment {
   id        Int     @id @default(autoincrement())
+  application Int
   title     String
   name      String
   account   String

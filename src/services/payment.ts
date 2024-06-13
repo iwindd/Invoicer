@@ -3,6 +3,7 @@ import { Inputs } from "@/app/admin/payment/schema";
 import { TableFetch } from "./type";
 import * as formatter from '@/libs/formatter';
 import Prisma from "@/libs/prisma";
+import { getServerSession } from "@/libs/session";
 
 export const getPayments = async (table: TableFetch) => {
   try {
@@ -72,7 +73,7 @@ export const activePayment = async (id: number) => {
 
 export const upsertPayment = async (payload: Inputs, active: boolean, id?: number) => {
   try {
-
+    const session = await getServerSession();
     const getActive = async () => {
       if (active) {
         const deactiveResp = await deactivePayment()
@@ -88,6 +89,7 @@ export const upsertPayment = async (payload: Inputs, active: boolean, id?: numbe
       name: payload.name,
       account: payload.account,
       active: await getActive(),
+      application: session?.user.application as number
     }
 
     await Prisma.payment.upsert({

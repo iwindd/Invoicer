@@ -251,7 +251,8 @@ export const upsertInvoice = async (payload: {
       end: dayjs(payload.end).endOf("day").toDate(),
       createdById: session?.user.uid as number,
       ownerId: payload.owner,
-      status: 0
+      status: 0,
+      application: session?.user.application as number
     }
 
     const invoice = await Prisma.invoice.upsert({

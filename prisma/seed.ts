@@ -45,6 +45,7 @@ async function main() {
         name: "Change me",
         account: "Change me",
         active: true,
+        application: 1
       }
     })
   }
