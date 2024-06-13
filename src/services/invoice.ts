@@ -26,10 +26,12 @@ export interface InvoiceItem {
 
 export const getInvoices = async (table: TableFetch, id: number) => {
   try {
+    const session = await getServerSession();
     const data = await Prisma.$transaction([
       Prisma.invoice.findMany({
         where: {
           ownerId: id,
+          application: session?.user.application as number,
           ...formatter.filter(table.filter, ['note'])
         },
         take: table.pagination.pageSize,
@@ -53,7 +55,7 @@ export const getInvoices = async (table: TableFetch, id: number) => {
           },
         }
       }),
-      Prisma.invoice.count({ where: { ownerId: id } }),
+      Prisma.invoice.count({ where: { ownerId: id, application: session?.user.application as number, } }),
     ])
 
     return {
@@ -73,7 +75,7 @@ export const getInvoices = async (table: TableFetch, id: number) => {
 export const getInvoice = async (id: number) => {
   try {
     const invoice = await Prisma.invoice.findFirst({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       select: {
         id: true,
         items: true,
@@ -95,6 +97,7 @@ export const getInvoice = async (id: number) => {
 
 export const getInvoicesAll = async (table: TableFetch) => {
   try {
+    const session = await getServerSession();
     const filter = formatter.filter(table.filter, ['code', 'note'], (text) => [
       { createdBy: { ...formatter.filter(table.filter, ['firstname', 'lastname']) }, },
       { owner: { ...formatter.filter(table.filter, ['firstname', 'lastname']) }, }
@@ -115,7 +118,8 @@ export const getInvoicesAll = async (table: TableFetch) => {
                 }
               }
             )
-          )
+          ),
+          application: session?.user.application as number
         },
         select: {
           id: true,
@@ -141,7 +145,7 @@ export const getInvoicesAll = async (table: TableFetch) => {
           }
         }
       }),
-      Prisma.invoice.count(),
+      Prisma.invoice.count({where: {application: session?.user.application}}),
     ])
 
     return {
@@ -212,7 +216,8 @@ export const getInvoicesAnalysis = async (id: number) => {
   try {
     const data = await Prisma.invoice.findMany({
       where: {
-        ownerId: id
+        ownerId: id,
+        application: (await getServerSession())?.user.application, 
       },
       select: {
         status: true,
@@ -308,7 +313,7 @@ export const upsertInvoice = async (payload: {
 export const setInvoiceCancel = async (id: number) => {
   try {
     const invoice = await Prisma.invoice.update({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       data: { status: -1 },
       include: { owner: { select: { id: true, firstname: true, lastname: true } } }
     })
@@ -363,7 +368,7 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
     fs.writeFile(filePath, buffer, () => { });
 
     const invoice = await Prisma.invoice.update({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       data: {
         image: fileName,
         status: 2
@@ -383,7 +388,7 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
 export const setInvoicePaymentStatus = async (id: number, status: 0 | 1) => {
   try {
     const invoice = await Prisma.invoice.update({
-      where: { id: id },
+      where: { id: id, application: (await getServerSession())?.user.application, },
       data: {
         status: status
       },
