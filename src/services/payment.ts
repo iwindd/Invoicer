@@ -11,7 +11,8 @@ export const getPayments = async (table: TableFetch) => {
       Prisma.payment.findMany({
         where: {
           isDeleted: false,
-          ...(formatter.filter(table.filter, ['title', 'name', 'account']))
+          ...(formatter.filter(table.filter, ['title', 'name', 'account'])),
+          application: (await getServerSession())?.user.application as number
         },
 
         take: table.pagination.pageSize,
@@ -46,7 +47,7 @@ export const getPayments = async (table: TableFetch) => {
 export const deactivePayment = async () => {
   try {
     await Prisma.payment.updateMany({
-      where: { active: true },
+      where: { active: true, application: (await getServerSession())?.user.application as number },
       data: { active: false }
     })
 
@@ -63,7 +64,7 @@ export const activePayment = async (id: number) => {
 
     if (!resp.state) return resp;
 
-    await Prisma.payment.update({ where: { id }, data: { active: true } })
+    await Prisma.payment.update({ where: { id, application: (await getServerSession())?.user.application as number }, data: { active: true } })
 
     return { state: true }
   } catch (error) {
@@ -93,7 +94,7 @@ export const upsertPayment = async (payload: Inputs, active: boolean, id?: numbe
     }
 
     await Prisma.payment.upsert({
-      where: { id: id || 0, },
+      where: { id: id || 0, application: session?.user.application as number },
       create: data,
       update: data
     })
@@ -102,6 +103,8 @@ export const upsertPayment = async (payload: Inputs, active: boolean, id?: numbe
       state: true
     }
   } catch (error) {
+    console.log(error);
+    
     return {
       state: false
     }
@@ -110,7 +113,7 @@ export const upsertPayment = async (payload: Inputs, active: boolean, id?: numbe
 
 export const deletePayment = async (id: number) => {
   try {
-    await Prisma.payment.update({ where: { id, active: false }, data: { isDeleted: true } })
+    await Prisma.payment.update({ where: { id, active: false, application: (await getServerSession())?.user.application }, data: { isDeleted: true } })
 
     return { state: true }
   } catch (error) {
