@@ -2,7 +2,7 @@
 import React from 'react'
 import Grid from '@mui/material/Unstable_Grid2/Grid2'
 import Datatable from './components/datatable'
-import { Stack, Typography } from '@mui/material'
+import { Button, Link, Stack, Typography } from '@mui/material'
 import AddController from './components/add'
 import { getInvoicesAnalysis } from '@/services/invoice'
 import * as formatter from '@/libs/formatter'
@@ -17,6 +17,9 @@ import { TotalSuccessInvoice } from './components/stats/success';
 import { TotalProgressInvoice } from './components/stats/progress';
 import { TotalFailInvoice } from './components/stats/fail';
 import CreateController from './components/create';
+import { SettingsApplicationsTwoTone } from '@mui/icons-material';
+import RouterLink from 'next/link';
+import { paths } from '@/paths';
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const customer = await getCustomer(Number(params.id));
@@ -43,7 +46,18 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           </Stack>
           <>
             <ApiController />
-            <CreateController />
+            {
+              data.isApplication ? (
+                <Link component={RouterLink} href={`${paths.admin.applications}/${data.loginId}`}>
+                  <Button variant="contained" color="info" startIcon={<SettingsApplicationsTwoTone/>}>
+                    ดูแอพพลิเคชั่น
+                  </Button>
+                </Link>
+              ):(
+                <CreateController />
+              )
+            }
+            
             <AddController />
           </>
         </Stack>

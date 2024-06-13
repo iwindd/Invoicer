@@ -77,7 +77,9 @@ export const getCustomer = async (id: number) => {
     const data = await Prisma.customers.findFirst({
       where: { id: id, application: (await getServerSession())?.user.application, },
       select: {
+        isApplication: true,
         id: true,
+        loginId: true,
         firstname: true,
         lastname: true,
         email: true,
