@@ -38,6 +38,7 @@ model Customers {
   lastname  String
 
   email String @unique
+  loginId Int @default(0)
 
   createdBy   User @relation(fields: [createdById], references: [id])
   createdById Int

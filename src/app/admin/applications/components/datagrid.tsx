@@ -3,7 +3,7 @@ import Datatable from '@/components/datatable'
 import React from 'react'
 import * as formatter from '@/libs/formatter'
 import { GridActionsCellItem, GridColDef } from '@mui/x-data-grid'
-import { Customers, Invoice, User } from '@prisma/client';
+import { Customers } from '@prisma/client';
 import { Delete, ViewAgenda } from '@mui/icons-material';
 import { useQueryClient } from '@tanstack/react-query';
 import { useInterface } from '@/app/providers/InterfaceProvider';
@@ -18,7 +18,7 @@ import { Session } from 'next-auth';
 import { getApplications } from '@/services/application';
 
 const columns = (menu: {
-  onDelete: (data: User) => any;
+  onDelete: (data: Customers) => any;
 }, session: Session | null): GridColDef[] => {
   return [
     { field: 'joinedAt', headerName: 'วันที่เข้าร่วม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
@@ -28,8 +28,8 @@ const columns = (menu: {
       type: 'actions',
       headerName: 'เครื่องมือ',
       flex: 1,
-      getActions: ({ row }: { row: User }) => [
-        <GridLinkAction key="view" to={`${paths.admin.applications}/${row.id}`} icon={<ViewAgenda />} label="ดูรายละเอียด" showInMenu />,
+      getActions: ({ row }: { row: Customers }) => [
+        <GridLinkAction key="view" to={`${paths.admin.applications}/${row.loginId}`} icon={<ViewAgenda />} label="ดูรายละเอียด" showInMenu />,
         <GridActionsCellItem key="delete" icon={<Delete />} label="ลบ" onClick={(menu.onDelete(row))} showInMenu />
       ],
     }
@@ -61,7 +61,7 @@ const Datagrid = () => {
   })
 
   const Menu = {
-    onDelete: React.useCallback((data: User) => () => {
+    onDelete: React.useCallback((data: Customers) => () => {
       deleteConfirmation.with(data.id)
       deleteConfirmation.setText(`คุณต้องการที่จะลบแอดมิน"${data.firstname} ${data.lastname}"หรือไม่?`)
       deleteConfirmation.handleOpen();
@@ -76,7 +76,7 @@ const Datagrid = () => {
         fetch={getApplications}
         height={700}
         onDoubleClick={
-          ({ row: data }: { row: User }) => router.push(`${paths.admin.applications}/${data.id}`)
+          ({ row: data }: { row: Customers }) => router.push(`${paths.admin.applications}/${data.loginId}`)
         }
       />
       <Confirmation {...deleteConfirmation.props} />

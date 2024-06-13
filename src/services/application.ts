@@ -38,7 +38,8 @@ export const createApplication = async (id: number) => {
           id: id
         },
         data:{ 
-          isApplication: true
+          isApplication: true,
+          loginId: user.id
         }
       }) 
     ])
@@ -78,6 +79,7 @@ export const getApplications = async (table: TableFetch) => {
         skip: table.pagination.page * table.pagination.pageSize,
         orderBy: formatter.order(table.sort),
         select: {
+          loginId: true,
           firstname: true,
           lastname: true,
           id: true,
