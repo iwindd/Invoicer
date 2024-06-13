@@ -1,4 +1,4 @@
-import { AdminPanelSettingsTwoTone, ChatTwoTone, HistoryTwoTone, PaymentTwoTone, PeopleTwoTone, ReceiptLongTwoTone } from "@mui/icons-material";
+import { AdminPanelSettingsTwoTone, ChatTwoTone, HistoryTwoTone, PaymentTwoTone, PeopleTwoTone, ReceiptLongTwoTone, SettingsApplicationsTwoTone } from "@mui/icons-material";
 import { ElementType } from "react";
 
 export const navIcons = {
@@ -8,4 +8,5 @@ export const navIcons = {
   'invoice': ReceiptLongTwoTone,
   'admin': AdminPanelSettingsTwoTone,
   'payment': PaymentTwoTone,
+  'applications': SettingsApplicationsTwoTone,
 } as Record<string, ElementType>;

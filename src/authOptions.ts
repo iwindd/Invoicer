@@ -24,7 +24,8 @@ export const authOptions = {
           email: token.email,
           firstname: token.firstname,
           lastname: token.lastname,
-          status: token.status
+          status: token.status,
+          root: token.root 
         }, ...user
       }
     },
@@ -58,7 +59,8 @@ export const authOptions = {
             uid: data.id,
             firstname: data.firstname,
             lastname: data.lastname,
-            status: data.permission
+            status: data.permission,
+            root: data.root
           }
         } catch (error) {
           return null;

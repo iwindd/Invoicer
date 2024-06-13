@@ -5,7 +5,8 @@ export interface User{
   email: string,
   firstname: string,
   lastname: string,
-  status: number
+  status: number,
+  root: boolean
 }
 
 declare module "next-auth" {

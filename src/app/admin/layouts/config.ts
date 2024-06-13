@@ -13,3 +13,7 @@ export const navCEO = [
   { key: 'admin', title: 'แอดมิน', href: path.admin, icon: 'admin', matcher: { type: 'startsWith', href: path.admin } },
   { key: 'payment', title: 'ช่องทางการชำระเงิน', href: path.payment, icon: 'payment' },
 ] satisfies NavItemConfig[];
+
+export const navRoot = [
+  { key: 'applications', title: 'แอพพลิเคชั่น', href: paths.admin.applications, icon: 'applications', matcher: { type: 'startsWith', href: paths.admin.applications } },
+] satisfies NavItemConfig[];

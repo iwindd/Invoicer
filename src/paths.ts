@@ -8,11 +8,8 @@ export const paths = {
     customers: '/admin/customers',
     invoice: '/admin/invoices',
     admin: '/admin/admin',
-    payment: '/admin/payment'
-  },
-  manager: {
-    overview: '/manager',
-    applications: '/manager/applications'
+    payment: '/admin/payment',
+    applications: '/admin/applications'
   }
 } as const;
 
@@ -28,9 +25,8 @@ export const routes = [
   { name: "admin.admin", path: '/admin/admin', label: 'แอดมิน' },
   { name: "admin.admin.detail", path: '/admin/admin/:id', label: 'รายละเอียดแอดมิน' },
   { name: "admin.payment", path: '/admin/payment', label: 'ช่องทางการชำระเงิน' },
-
-  { name: "manager.dashboard", path: '/manager', label: 'ภาพรวม' },
-  { name: "manager.applications", path: '/manager/applications', label: 'แอพพลิเคชั่น' },
+  { name: "admin.dashboard", path: '/admin', label: 'ภาพรวม' },
+  { name: "admin.applications", path: '/admin/applications', label: 'แอพพลิเคชั่น' },
 ] as {
   name: string,
   path: string,

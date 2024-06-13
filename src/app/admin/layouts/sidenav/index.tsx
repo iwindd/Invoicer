@@ -14,7 +14,7 @@ import { paths } from '@/paths';
 import { isNavItemActive } from '@/libs/nav';
 import Logo from '@/components/core/logo';
 
-import { navCEO, navItems } from '../config';
+import { navCEO, navItems, navRoot } from '../config';
 import { navIcons } from '../icons';
 import { ArrowRightTwoTone, ArrowUpward } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
@@ -58,7 +58,11 @@ export function SideNav(): React.JSX.Element {
       </Stack>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: [...navItems, ...(session?.user.status == 1 ? navCEO : [])] })}
+        {renderNavItems({ pathname, items: [
+          ...navItems, 
+          ...(session?.user.status == 1 ? navCEO : []),
+          ...(session?.user.root == true ? navRoot : [])],
+          })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
     </Box>

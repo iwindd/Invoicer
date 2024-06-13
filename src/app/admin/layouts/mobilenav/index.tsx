@@ -12,7 +12,7 @@ import Typography from '@mui/material/Typography';
 import type { NavItemConfig } from '@/types/nav';
 import { isNavItemActive } from '@/libs/nav';
 
-import { navCEO, navItems } from '../config';
+import { navCEO, navItems, navRoot } from '../config';
 import { navIcons } from '../icons';
 import { ArrowForward, ArrowRight } from '@mui/icons-material';
 import { useSession } from 'next-auth/react';
@@ -26,6 +26,9 @@ export interface MobileNavProps {
 export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
   const pathname = usePathname();
   const { data: session } = useSession()
+
+  console.log(session?.user.root);
+  
 
   return (
     <Drawer
@@ -57,7 +60,11 @@ export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element 
     >
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
       <Box component="nav" sx={{ flex: '1 1 auto', p: '12px' }}>
-        {renderNavItems({ pathname, items: [...navItems, ...(session?.user.status == 1 ? navCEO : [])] })}
+        {renderNavItems({ pathname, items: [
+          ...navItems, 
+          ...(session?.user.status == 1 ? navCEO : []) ,
+          ...(session?.user.root == true ? navRoot : [])],
+          })}
       </Box>
       <Divider sx={{ borderColor: 'var(--mui-palette-neutral-700)' }} />
     </Drawer>

@@ -29,7 +29,7 @@ const columns = (menu: {
       headerName: 'เครื่องมือ',
       flex: 1,
       getActions: ({ row }: { row: User }) => [
-        <GridLinkAction key="view" to={`${paths.manager.applications}/${row.id}`} icon={<ViewAgenda />} label="ดูรายละเอียด" showInMenu />,
+        <GridLinkAction key="view" to={`${paths.admin.applications}/${row.id}`} icon={<ViewAgenda />} label="ดูรายละเอียด" showInMenu />,
         <GridActionsCellItem key="delete" icon={<Delete />} label="ลบ" onClick={(menu.onDelete(row))} showInMenu />
       ],
     }
@@ -76,7 +76,7 @@ const Datagrid = () => {
         fetch={getApplications}
         height={700}
         onDoubleClick={
-          ({ row: data }: { row: User }) => router.push(`${paths.manager.applications}/${data.id}`)
+          ({ row: data }: { row: User }) => router.push(`${paths.admin.applications}/${data.id}`)
         }
       />
       <Confirmation {...deleteConfirmation.props} />
