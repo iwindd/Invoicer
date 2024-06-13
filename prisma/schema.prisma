@@ -28,6 +28,7 @@ model User {
 
   isDeleted  Boolean @default(false)
   permission Int     @default(0)
+  owner Boolean @default(true)
   root Boolean @default(true)
 
   createdAt DateTime    @default(now())

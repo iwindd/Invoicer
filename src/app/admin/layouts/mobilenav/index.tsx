@@ -25,10 +25,7 @@ export interface MobileNavProps {
 
 export function MobileNav({ open, onClose }: MobileNavProps): React.JSX.Element {
   const pathname = usePathname();
-  const { data: session } = useSession()
-
-  console.log(session?.user.root);
-  
+  const { data: session } = useSession()  
 
   return (
     <Drawer
