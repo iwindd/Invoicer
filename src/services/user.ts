@@ -58,17 +58,17 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
       lastname: payload.lastname,
       password: await bcrypt.hash(payload?.password || "unchanged", 16),
       email: payload.email,
-      permission: superadmin ? 1 : 0
+      permission: superadmin ? 1 : 0,
     }
 
     if (id) {
       // if update permission
-      const source = await Prisma.user.findFirst({ where: { id: session?.user.uid }, select: { owner: false } });
+      const source = await Prisma.user.findFirst({ where: { id: session?.user.uid }, select: { owner: true } });
       if (!source) throw Error("no_found_source");
 
       if (session?.user.uid != id) {
         // anti superadmin change permission of root superadmin
-        const victim = await Prisma.user.findFirst({ where: { id }, select: { owner: false } });
+        const victim = await Prisma.user.findFirst({ where: { id }, select: { owner: true } });
         if (!victim) throw Error("no_found_victim");
 
         if (!source?.owner) {
@@ -173,7 +173,7 @@ export const setAdminPassword = async (password: string, id: number) => {
 
     if (session?.user.uid != id) {
       // anti superadmin change password of root superadmin
-      const victim = await Prisma.user.findFirst({ where: { id: id }, select: { owner: false } });
+      const victim = await Prisma.user.findFirst({ where: { id: id }, select: { owner: true } });
 
       if (victim?.owner) throw Error("cannot_change_password")
     }
