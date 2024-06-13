@@ -17,11 +17,12 @@ export const getCustomers = async (table: TableFetch) => {
     ])
 
     const currentTime = dayjs();
+    const session = await getServerSession();
     const data = await Prisma.$transaction([
       Prisma.customers.findMany({
         where: {
           isDeleted: false,
-          application: (await getServerSession())?.user.application,
+          application: session?.user.application as number,
           ...(filter)
         },
 
@@ -53,7 +54,7 @@ export const getCustomers = async (table: TableFetch) => {
           }
         }
       }),
-      Prisma.customers.count({ where: { isDeleted: false } }),
+      Prisma.customers.count({ where: { isDeleted: false, application: session?.user.application as number } }),
     ])
 
     return {

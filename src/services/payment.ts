@@ -7,12 +7,13 @@ import { getServerSession } from "@/libs/session";
 
 export const getPayments = async (table: TableFetch) => {
   try {
+    const session = await getServerSession();
     const data = await Prisma.$transaction([
       Prisma.payment.findMany({
         where: {
           isDeleted: false,
           ...(formatter.filter(table.filter, ['title', 'name', 'account'])),
-          application: (await getServerSession())?.user.application as number
+          application: session?.user.application as number
         },
 
         take: table.pagination.pageSize,
@@ -27,7 +28,7 @@ export const getPayments = async (table: TableFetch) => {
           createdAt: true
         }
       }),
-      Prisma.payment.count({ where: { isDeleted: false } }),
+      Prisma.payment.count({ where: { isDeleted: false, application: session?.user.application as number } }),
     ])
 
     return {
