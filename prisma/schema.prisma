@@ -33,6 +33,7 @@ model User {
 model Customers {
   id        Int    @id @default(autoincrement())
   application Int
+  isApplication Boolean @default(false)
   firstname String
   lastname  String
 

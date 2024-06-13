@@ -9,9 +9,9 @@ import { AddTwoTone } from '@mui/icons-material';
 import { useDialog } from '@/hooks/use-dialog';
 import Grid from '@mui/material/Unstable_Grid2/Grid2';
 import { Inputs, Schema } from '../schema';
-import { upsertApplication } from '@/services/application';
+/* import { upsertApplication } from '@/services/application';
 
-export interface AddDialogProps {
+ */export interface AddDialogProps {
   onClose: () => void;
   open: boolean;
 }
@@ -33,7 +33,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
   const onSubmit = async (payload: Inputs) => {
     if (isLoading) return
     setLoading(true);
-    const resp = await upsertApplication(payload, undefined);
+/*     const resp = await upsertApplication(payload, undefined);
 
     if (resp.state) {
       onClose()
@@ -43,7 +43,7 @@ function AddDialog({ onClose, open }: AddDialogProps): React.JSX.Element {
     } else {
       enqueueSnackbar("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง", { variant: "error" })
     }
-    setLoading(false);
+    setLoading(false); */
   }
 
   const handleClose = (_: any, reason: any) => {

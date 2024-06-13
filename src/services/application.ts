@@ -1,63 +1,56 @@
 "use server";
-import { Inputs } from "@/app/manager/applications/schema";
 import Prisma from "@/libs/prisma";
-import { TableFetch } from "./type";
-import * as formatter from '@/libs/formatter';
+import { getServerSession } from "@/libs/session";
+import dayjs, { Dayjs } from '@/libs/dayjs';
+import { v1 } from "uuid";
+import bcrypt from 'bcrypt';
 
-export const getApplications = async (table: TableFetch) => {
+export const createApplication = async (id: number) => {
   try {
-    const data = await Prisma.$transaction([
-      Prisma.application.findMany({
+    const customer = await Prisma.customers.findUnique({where: {id: id}});
+    if (!customer) throw Error("not_found_customer");
+    const password = v1().slice(0, 10);
+    const user = await Prisma.user.create({
+      data: {
+        firstname: customer.firstname,
+        lastname: customer.lastname,
+        password: await bcrypt.hash(password, 16),
+        email: customer.email,
+        permission: 1,
+        application: 0,
+      }
+    });
+
+    
+    await Prisma.$transaction([
+      Prisma.user.update({
         where: {
-          isDeleted: false,
-          ...formatter.filter(table.filter, ['title'])
+          id: user.id
         },
-        take: table.pagination.pageSize,
-        skip: table.pagination.page * table.pagination.pageSize,
-        orderBy: formatter.order(table.sort),
-        select: {
-          id: true,
-          title: true,
-          createdAt: true
+        data:{ 
+          application: user.id
         }
       }),
-      Prisma.application.count({ where: { isDeleted: false } }),
+      Prisma.customers.update({
+        where: {
+          id: id
+        },
+        data:{ 
+          isApplication: true
+        }
+      }) 
     ])
 
     return {
       state: true,
-      data: data[0],
-      total: data[1]
+      password: password
     }
   } catch (error) {
-    return {
+    console.log(error);
+    
+    return{ 
       state: false,
-      data: [],
-      total: 0
+      password: ""
     }
-  }
-} 
-
-export const upsertApplication = async (payload: Inputs, id?: number) => {
-  try {
-    const data = {
-      title: payload.title,
-      lineNotify: payload.token || ""
-    }
-
-    const application = await Prisma.application.upsert({
-      where: {
-        id: id || 0,
-      },
-      create: data,
-      update: {
-        title: data.title,
-        lineNotify: data.lineNotify
-      },
-    })
-
-    return { state: true }
-  } catch (error) {
-    return { state: false }
   }
 }

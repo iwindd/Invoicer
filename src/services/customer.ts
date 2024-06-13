@@ -35,6 +35,7 @@ export const getCustomers = async (table: TableFetch) => {
           id: true,
           email: true,
           joinedAt: true,
+          isApplication: true,
 
           createdBy: {
             select: {

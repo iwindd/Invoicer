@@ -11,14 +11,22 @@ import { useInterface } from '@/app/providers/InterfaceProvider';
 import { useSnackbar } from 'notistack';
 import { Confirmation, useConfirm } from '@/hooks/use-confirm';
 import { paths } from '@/paths';
-import { useRouter } from 'next/navigation';
+import { notFound, useRouter } from 'next/navigation';
 import GridLinkAction from '@/components/GridLinkAction';
+import { useSession } from 'next-auth/react';
+import { Session } from 'next-auth';
 
 const columns = (menu: {
   onDelete: (data: Customers) => any;
-}): GridColDef[] => {
+}, session: Session): GridColDef[] => {
+
   return [
     { field: 'joinedAt', headerName: 'วันที่เข้าร่วม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
+    ...(
+      session.user.root ? (
+        [{ field: 'isApplication', headerName: 'แอพพลิเคชั่น', flex: 1, valueGetter: (value: boolean) => !value ? "ไม่":"ใช่" }]
+      ): ([])
+    ),
     { field: 'firstname', headerName: 'ชื่อ', flex: 1, valueGetter: (_, row: Customers) => formatter.text(`${row.firstname} ${row.lastname}`)},
     { field: 'email', headerName: 'อีเมล', flex: 1 },
     { field: 'Invoice', headerName: 'กำลังดำเนินการ', flex: 1, valueGetter: (value: Invoice[]) => formatter.number(value.length) },
@@ -41,6 +49,9 @@ const Datagrid = () => {
   const queryClient = useQueryClient();
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
+  const { data: session } = useSession();
+
+  if (!session) return notFound()
 
   const deleteConfirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
@@ -70,7 +81,7 @@ const Datagrid = () => {
   return (
     <>
       <Datatable
-        columns={columns(Menu)}
+        columns={columns(Menu, session)}
         name={'customers'}
         fetch={getCustomers}
         height={700}

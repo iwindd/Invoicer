@@ -15,7 +15,6 @@ import GridLinkAction from '@/components/GridLinkAction';
 import { deleteAdmin } from '@/services/user';
 import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
-import { getApplications } from '@/services/application';
 
 const columns = (menu: {
   onDelete: (data: User) => any;
@@ -73,7 +72,7 @@ const Datagrid = () => {
       <Datatable
         columns={columns(Menu, session)}
         name={'applications'}
-        fetch={getApplications}
+        fetch={() => []}
         height={700}
         onDoubleClick={
           ({ row: data }: { row: User }) => router.push(`${paths.admin.applications}/${data.id}`)

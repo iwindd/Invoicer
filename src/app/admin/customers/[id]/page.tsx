@@ -16,6 +16,7 @@ import { TotalInvoice } from './components/stats/total';
 import { TotalSuccessInvoice } from './components/stats/success';
 import { TotalProgressInvoice } from './components/stats/progress';
 import { TotalFailInvoice } from './components/stats/fail';
+import CreateController from './components/create';
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const customer = await getCustomer(Number(params.id));
@@ -42,6 +43,7 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           </Stack>
           <>
             <ApiController />
+            <CreateController />
             <AddController />
           </>
         </Stack>
