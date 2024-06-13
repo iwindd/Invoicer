@@ -1,34 +1,52 @@
 "use server";
-import { TotalInvoice } from './stats/total'
-import { TotalSuccessInvoice } from './stats/success'
-import { TotalProgressInvoice } from './stats/progress'
-import { TotalFailInvoice } from './stats/fail'
-import { TotalCanceledInvoice } from './stats/canceled'
-import { TotalPendingInvoice } from './stats/pending'
-import { TotalCheckingInvoice } from './stats/checking'
-import { TotalNearInvoice } from './stats/near'
-import { Traffic } from './charts/traffic'
-import { Sales } from './charts/sales'
-import { CheckingInvoice } from './table/checking'
-import { OvertimeInvoice } from './table/overtime'
+import { TotalInvoice } from "./stats/total";
+import { TotalSuccessInvoice } from "./stats/success";
+import { TotalProgressInvoice } from "./stats/progress";
+import { TotalFailInvoice } from "./stats/fail";
+import { TotalCanceledInvoice } from "./stats/canceled";
+import { TotalPendingInvoice } from "./stats/pending";
+import { TotalCheckingInvoice } from "./stats/checking";
+import { TotalNearInvoice } from "./stats/near";
+import { Traffic } from "./charts/traffic";
+import { Sales } from "./charts/sales";
+import { CheckingInvoice } from "./table/checking";
+import { OvertimeInvoice } from "./table/overtime";
 import Prisma from "@/libs/prisma";
 import dayjs from "@/libs/dayjs";
 import * as ff from "@/libs/formatter";
 import Grid from "@mui/material/Unstable_Grid2/Grid2";
+import { Button, Link, Stack, Typography } from "@mui/material";
+import { PeopleAltTwoTone } from "@mui/icons-material";
+import RouterLink from "next/link";
+import { paths } from "@/paths";
+import { notFound } from "next/navigation";
 
 const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
+  const customers = await Prisma.customers.findFirst({
+    where: {
+      loginId: +id
+    },
+    select: {
+      id: true,
+      firstname: true,
+      lastname: true
+    }
+  })
+
+  if (!customers) return notFound();
+
   const invoices = await Prisma.invoice.findMany({
     where: {
-      application: +id,
+      application: +id
     },
     include: {
       owner: {
         select: {
           firstname: true,
-          lastname: true,
-        },
-      },
-    },
+          lastname: true
+        }
+      }
+    }
   });
 
   //stats
@@ -124,6 +142,22 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
 
   return (
     <Grid container spacing={3}>
+      <Grid lg={12} md={12} xs={12}>
+        <Stack direction="row" spacing={3} alignItems={"center"}>
+          <Stack spacing={1} sx={{ flex: "1 1 auto" }}>
+            <Typography variant="h4">
+              {customers.firstname} {customers.lastname}
+            </Typography>
+          </Stack>
+          <>
+            <Link component={RouterLink} href={`${paths.admin.customers}/${customers.id}`}>
+              <Button variant="contained" color="info" startIcon={<PeopleAltTwoTone/>}>
+                ดูรายละเอียดลูกค้า
+              </Button>
+            </Link>
+          </>
+        </Stack>
+      </Grid>
       <Grid lg={3} sm={6} xs={12}>
         <TotalNearInvoice
           sx={{ height: "100%" }}
