@@ -25,7 +25,8 @@ export const authOptions = {
           firstname: token.firstname,
           lastname: token.lastname,
           status: token.status,
-          root: token.root 
+          root: token.root,
+          application: token.application
         }, ...user
       }
     },
@@ -60,7 +61,8 @@ export const authOptions = {
             firstname: data.firstname,
             lastname: data.lastname,
             status: data.permission,
-            root: data.root
+            root: data.root,
+            application: data.application
           }
         } catch (error) {
           return null;

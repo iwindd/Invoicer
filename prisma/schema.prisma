@@ -21,6 +21,7 @@ model Application{
 
 model User {
   id        Int    @id @default(autoincrement())
+  application Int
   email     String @unique
   password  String
   firstname String
@@ -28,7 +29,7 @@ model User {
 
   isDeleted  Boolean @default(false)
   permission Int     @default(0)
-  owner Boolean @default(true)
+  owner Boolean @default(false)
   root Boolean @default(true)
 
   createdAt DateTime    @default(now())

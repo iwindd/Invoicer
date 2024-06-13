@@ -59,6 +59,7 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
       password: await bcrypt.hash(payload?.password || "unchanged", 16),
       email: payload.email,
       permission: superadmin ? 1 : 0,
+      application: session?.user.application as number,
     }
 
     if (id) {

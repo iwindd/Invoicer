@@ -8,6 +8,8 @@ async function main() {
     password: await bcrypt.hash("12341234", 16),
     email: "superadmin@gmail.com",
     permission: 1,
+    id: 1,
+    application: 1,
     isDeleted: false,
     root: true
   };
@@ -24,6 +26,7 @@ async function main() {
     password: await bcrypt.hash("12341234", 16),
     email: "admin@gmail.com",
     permission: 0,
+    application: 1,
     isDeleted: false
   }
 
