@@ -8,7 +8,7 @@ async function Middleware(request: NextRequest) {
   const originalUrl = process.env.NEXTAUTH_URL + request.nextUrl.pathname
   const token: User = await getToken({ req: request }) as any;
 
-  if (pathname != paths.auth.signIn && !token) return NextResponse.next(); // if no login
+  if (pathname != paths.auth.signIn && !token) return NextResponse.redirect(new URL(paths.auth.signIn, originalUrl)); // if no login
   if (pathname == paths.auth.signIn && token) return NextResponse.redirect(new URL(paths.admin.overview, originalUrl)); // if already login
   if (pathname == "/") return NextResponse.redirect(new URL(paths.admin.overview, originalUrl));
   if (pathname.startsWith(paths.admin.overview) && !token) return NextResponse.redirect(new URL(paths.auth.signIn, originalUrl));
