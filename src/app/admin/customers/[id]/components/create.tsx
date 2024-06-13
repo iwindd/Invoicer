@@ -6,7 +6,9 @@ import { useDialog } from "@/hooks/use-dialog";
 import { Confirmation, useConfirm } from "@/hooks/use-confirm";
 import { useInterface } from "@/app/providers/InterfaceProvider";
 import { createApplication } from "@/services/application";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useSnackbar } from "notistack";
+import { paths } from "@/paths";
 
 export interface AddDialogProps {
   onClose: () => void;
@@ -16,6 +18,8 @@ export interface AddDialogProps {
 const CreateController = () => {
   const { setBackdrop } = useInterface();
   const { id } = useParams();
+  const { enqueueSnackbar } = useSnackbar();
+  const router = useRouter();
   const createConfirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
     text: "คุณต้องการที่จะสร้างแอพพลิเคชั่นหรือไม่?",
@@ -24,9 +28,13 @@ const CreateController = () => {
         setBackdrop(true);
         const resp = await createApplication(+id);
 
-        console.log(resp);
-        
+        if (!resp.state) throw Error("error");
+
+        enqueueSnackbar("สร้างแอพพลิเคชั่นสาเร็จ", {variant: "success"});
+        router.push(`${paths.admin.applications}/${resp.application}`);
+        router.refresh();
       } catch (error) {
+        enqueueSnackbar("มีบางอย่างผิดพลาดกรุณาลองใหม่อีกครั้งในภายหลัง", {variant: "error"});
       } finally {
         setBackdrop(false);
       }

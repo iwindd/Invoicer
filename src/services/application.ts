@@ -22,7 +22,6 @@ export const createApplication = async (id: number) => {
         application: 0,
       }
     });
-
     
     await Prisma.$transaction([
       Prisma.user.update({
@@ -46,11 +45,10 @@ export const createApplication = async (id: number) => {
 
     return {
       state: true,
+      application: user.id,
       password: password
     }
   } catch (error) {
-    console.log(error);
-    
     return{ 
       state: false,
       password: ""
