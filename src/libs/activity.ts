@@ -26,6 +26,7 @@ export const Activity = async (
     return await Prisma.activity.create({
       data: {
         source: session.user.uid as number,
+        application: session.user.application,
         category: payload.category,
         type: payload.type,
         payload: JSON.stringify(payload),
