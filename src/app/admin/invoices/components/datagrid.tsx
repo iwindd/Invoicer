@@ -28,6 +28,7 @@ const columns = (actions: {
   denypayment: (row: Invoice) => any
 }): GridColDef[] => {
   return [
+    { field: 'id', filterable: true, headerName: 'หมายเลข', flex: 1, valueGetter: (_) => formatter.text('# '+_) },
     { field: 'status', filterable: true, headerName: 'สถานะ', flex: 1, valueGetter: (_, row: Invoice) => formatter.invoice_(row) },
     { field: 'note', filterable: true, headerName: 'หมายเหต', flex: 1, valueGetter: (value: string) => formatter.text(value)},
     { field: 'items', filterable: false, headerName: 'จำนวน', flex: 1, valueGetter: (payload: string) => formatter.money((JSON.parse(payload) as InvoiceItem[]).reduce((p, i) => p + (i.amount * i.price), 0)) },
