@@ -160,7 +160,7 @@ export const upsertCustomer = async (payload: Inputs, id?: number, joined?: Dayj
 
 export const deleteCustomer = async (id: number) => {
   try {
-    await Prisma.customers.update({
+    const customer = await Prisma.customers.update({
       where: { id: id, application: (await getServerSession())?.user.application, },
       data: { isDeleted: true }
     })
@@ -168,7 +168,7 @@ export const deleteCustomer = async (id: number) => {
     Activity({
       category: "customer",
       type: "DELETE",
-      data: { id }
+      data: { id, firstname: customer.firstname, lastname: customer.lastname }
     })
 
     return {
