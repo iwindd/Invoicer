@@ -17,9 +17,7 @@ import { useSession } from 'next-auth/react';
 import { Session } from 'next-auth';
 import { getApplications } from '@/services/application';
 
-const columns = (menu: {
-  onDelete: (data: Customers) => any;
-}, session: Session | null): GridColDef[] => {
+const columns = (): GridColDef[] => {
   return [
     { field: 'joinedAt', headerName: 'วันที่เข้าร่วม', flex: 1, valueGetter: (value: Date) => formatter.date(value) },
     { field: 'firstname', headerName: 'ชื่อลูกค้า', flex: 1, valueGetter: (_, row: Customers) => formatter.text(`${row.firstname} ${row.lastname}`)},
@@ -29,8 +27,7 @@ const columns = (menu: {
       headerName: 'เครื่องมือ',
       flex: 1,
       getActions: ({ row }: { row: Customers }) => [
-        <GridLinkAction key="view" to={`${paths.admin.applications}/${row.loginId}`} icon={<ViewAgenda />} label="ดูรายละเอียด" showInMenu />,
-        <GridActionsCellItem key="delete" icon={<Delete />} label="ลบ" onClick={(menu.onDelete(row))} showInMenu />
+        <GridLinkAction key="view" to={`${paths.admin.applications}/${row.loginId}`} icon={<ViewAgenda />} label="ดูรายละเอียด"  />,
       ],
     }
   ]
@@ -43,35 +40,10 @@ const Datagrid = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { data: session } = useSession();
 
-  const deleteConfirmation = useConfirm<HTMLElement>({
-    title: "แจ้งเตือน",
-    text: "",
-    onConfirm: async (id: number) => {
-      setBackdrop(true);
-      const resp = await deleteAdmin(id)
-
-      if (resp.state) {
-        enqueueSnackbar("ลบแอดมินสำเร็จ!", { variant: "success" });
-        await queryClient.refetchQueries({ queryKey: ['admins'], type: 'active' })
-      } else {
-        enqueueSnackbar("เกิดข้อผิดพลาดกรุณาลองใหม่อีกครั้งภายหลัง", { variant: "error" });
-      }
-      setBackdrop(false);
-    }
-  })
-
-  const Menu = {
-    onDelete: React.useCallback((data: Customers) => () => {
-      deleteConfirmation.with(data.id)
-      deleteConfirmation.setText(`คุณต้องการที่จะลบแอดมิน"${data.firstname} ${data.lastname}"หรือไม่?`)
-      deleteConfirmation.handleOpen();
-    }, [deleteConfirmation]),
-  }
-
   return (
     <>
       <Datatable
-        columns={columns(Menu, session)}
+        columns={columns()}
         name={'applications'}
         fetch={getApplications}
         height={700}
@@ -79,7 +51,6 @@ const Datagrid = () => {
           ({ row: data }: { row: Customers }) => router.push(`${paths.admin.applications}/${data.loginId}`)
         }
       />
-      <Confirmation {...deleteConfirmation.props} />
     </>
   )
 }
