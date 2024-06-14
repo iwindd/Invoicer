@@ -20,10 +20,12 @@ import CreateController from './components/create';
 import { SettingsApplicationsTwoTone } from '@mui/icons-material';
 import RouterLink from 'next/link';
 import { paths } from '@/paths';
+import { getServerSession } from '@/libs/session';
 
 const CustomerPage = async ({ params }: { params: { id: string } }) => {
   const customer = await getCustomer(Number(params.id));
-  const analysis = await getInvoicesAnalysis(Number(params.id))
+  const analysis = await getInvoicesAnalysis(Number(params.id));
+  const session = await getServerSession();
 
   if (!customer.state) throw new Error("ERROR");
   if (!customer.data) return notFound()
@@ -47,15 +49,17 @@ const CustomerPage = async ({ params }: { params: { id: string } }) => {
           <>
             <ApiController />
             {
-              data.isApplication ? (
-                <Link component={RouterLink} href={`${paths.admin.applications}/${data.loginId}`}>
-                  <Button variant="contained" color="info" startIcon={<SettingsApplicationsTwoTone/>}>
-                    ดูแอพพลิเคชั่น
-                  </Button>
-                </Link>
-              ):(
-                <CreateController />
-              )
+              session?.user.root ? (
+                data.isApplication ? (
+                  <Link component={RouterLink} href={`${paths.admin.applications}/${data.loginId}`}>
+                    <Button variant="contained" color="info" startIcon={<SettingsApplicationsTwoTone/>}>
+                      ดูแอพพลิเคชั่น
+                    </Button>
+                  </Link>
+                ):(
+                  <CreateController />
+                )
+              ):null
             }
             
             <AddController />
