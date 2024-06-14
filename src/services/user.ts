@@ -7,6 +7,7 @@ import { paths } from "@/paths";
 import { Inputs } from "@/app/admin/admin/schema";
 import bcrypt from 'bcrypt';
 import { getServerSession } from "@/libs/session";
+import { isEmailAlreadyUsed } from "./utils";
 
 export const getUsers = async (table: TableFetch) => {
   try {
@@ -81,6 +82,10 @@ export const upsertAdmin = async (payload: Inputs, id?: number, superadmin?: boo
         // anti root superadmin remove self permission
         if (source.owner && data.permission == 0) throw Error("cannot_change_permission");
       }
+    }
+
+    if (!id && await isEmailAlreadyUsed(data.email) ){
+      throw Error("already_have_email");
     }
 
     const admin = await Prisma.user.upsert({

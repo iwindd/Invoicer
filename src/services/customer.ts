@@ -9,6 +9,7 @@ import { revalidatePath } from "next/cache";
 import { paths } from "@/paths";
 import { push } from "@/libs/line";
 import { Activity } from "@/libs/activity";
+import { isEmailAlreadyUsed } from "./utils";
 
 export const getCustomers = async (table: TableFetch) => {
   try {
@@ -109,6 +110,10 @@ export const upsertCustomer = async (payload: Inputs, id?: number, joined?: Dayj
       createdById: session?.user.uid as number,
       joinedAt: dayjs(joined || dayjs().toDate()).toDate(),
       application: session?.user.application as number
+    }
+
+    if (!id && await isEmailAlreadyUsed(data.email) ){
+      throw Error("already_have_email");
     }
 
     const customer = await Prisma.customers.upsert({
