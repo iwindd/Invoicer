@@ -186,13 +186,22 @@ export const setAdminPassword = async (password: string, id: number) => {
       if (victim?.owner) throw Error("cannot_change_password")
     }
 
+    const includeNoRoot = {application: session?.user.application as number}
+
     await Prisma.user.update({
-      where: { id: id, application: session?.user.application as number },
+      where: { 
+        id: id, 
+        ...(
+          session?.user.root ? ({}):(includeNoRoot)
+        )
+      },
       data: { password: await bcrypt.hash(password, 16) }
     })
 
     return { state: true }
   } catch (error) {
+    console.log(error);
+    
     return { state: false }
   }
 }

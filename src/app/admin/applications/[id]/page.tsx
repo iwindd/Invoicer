@@ -19,8 +19,10 @@ import RouterLink from "next/link";
 import { paths } from "@/paths";
 import { notFound } from "next/navigation";
 import LoginController from "./components/login";
+import EditProfile from "../../admin/[id]/components/editprofile";
 
 const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
+  const user = await Prisma.user.findFirst({where: {id: +id}});
   const customers = await Prisma.customers.findFirst({
     where: {
       loginId: +id
@@ -32,6 +34,7 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
     }
   })
 
+  if (!user) return notFound();
   if (!customers) return notFound();
 
   const invoices = await Prisma.invoice.findMany({
@@ -222,7 +225,9 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
           sx={{ height: "100%" }}
         />
       </Grid>
-      
+      <Grid lg={12} md={12} xs={12}>
+        <EditProfile user={user} />
+      </Grid>
     </Grid>
   );
 };
