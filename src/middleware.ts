@@ -1,34 +1,33 @@
-import { getToken } from "next-auth/jwt";
-import { NextRequest, NextResponse } from 'next/server';
-import { paths } from "./paths";
-import { User } from "../next-auth";
 
-function shouldExclude(request: NextRequest) {
-  const path = request.nextUrl.pathname;
+import { type NextRequest, NextResponse } from 'next/server';
+import createMiddleware from './libs/middleware';
+import { AuthMiddleware } from './middlewares/AuthMiddleware';
+import { RedirectMiddleware } from './middlewares/RedirectMiddleware';
+import { AdminMiddleware } from './middlewares/AdminMiddleware';
+import { RootMiddleware } from './middlewares/RootMiddleware';
 
-  return (
-      path.startsWith('/api') || //  exclude all API routes
-      path.startsWith('/static') || // exclude static files
-      path.includes('.') // exclude all files in the public folder
-  );
+const globalMiddlewares = {
+  before: AuthMiddleware
 }
 
-async function Middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const originalUrl = process.env.NEXTAUTH_URL + request.nextUrl.pathname
-  const token: User = await getToken({ req: request }) as any;
-/* 
-  if (shouldExclude(request)) return NextResponse.next()
-  if (pathname != paths.auth.signIn && !token) return NextResponse.redirect(new URL(paths.auth.signIn, originalUrl)); // if no login
-  if (pathname == paths.auth.signIn && token) return NextResponse.redirect(new URL(paths.admin.overview, originalUrl)); // if already login
-  if (pathname == "/" && token?.status == 0 || token?.status == 1) return NextResponse.redirect(new URL(paths.admin.overview, originalUrl));
-  if (pathname == "/" && token?.status == 2) return NextResponse.redirect(new URL(paths.manager.overview, originalUrl));
-  if (pathname.startsWith(paths.admin.overview) && token?.status == 2) return NextResponse.redirect(new URL(paths.manager.overview, originalUrl));
-  if (pathname.startsWith(paths.manager.overview) && token?.status != 2) return NextResponse.redirect(new URL(paths.admin.overview, originalUrl));
-  if (pathname.startsWith(paths.admin.overview) && !token) return NextResponse.redirect(new URL(paths.auth.signIn, originalUrl));
-  if ((pathname.startsWith(paths.admin.admin) || pathname.startsWith(paths.admin.payment)) && token.status == 0) return NextResponse.redirect(new URL(paths.admin.overview, originalUrl));
- */
-  return NextResponse.next();
-}
+const middlewares = {
+  "/": RedirectMiddleware,
+  "/admin/payment/:path*": AdminMiddleware,
+  "/admin/admin/:path*": AdminMiddleware,
+  "/admin/applications/:path*": RootMiddleware,
+};
 
-export default Middleware
+// Create middlewares helper
+export const middleware = createMiddleware(middlewares, globalMiddlewares);
+
+export const config = {
+  /*
+   * Match all paths except for:
+   * 1. /api/ routes
+   * 2. /_next/ (Next.js internals)
+   * 3. /_static (inside /public)
+   * 4. /_vercel (Vercel internals)
+   * 5. Static files (e.g. /favicon.ico, /sitemap.xml, /robots.txt, etc.)
+   */
+  matcher: ['/((?!api/|_next/|_static|_vercel|[\\w-]+\\.\\w+).*)'],
+};
