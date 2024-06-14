@@ -224,12 +224,7 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
           sx={{ height: "100%" }}
         />
       </Grid>
-      <Grid lg={4} md={6} xs={12}>
-        <OvertimeInvoice invoices={stats.overtime} sx={{ height: "100%" }} />
-      </Grid>
-      <Grid lg={8} md={12} xs={12}>
-        <CheckingInvoice invoices={stats.checking} sx={{ height: "100%" }} />
-      </Grid>
+      
     </Grid>
   );
 };
