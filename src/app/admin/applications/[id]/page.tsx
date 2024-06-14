@@ -20,8 +20,10 @@ import { paths } from "@/paths";
 import { notFound } from "next/navigation";
 import LoginController from "./components/login";
 import EditProfile from "../../admin/[id]/components/editprofile";
+import { isRootAccount } from "@/services/utils";
 
 const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
+  if (! await isRootAccount()) return notFound();
   const user = await Prisma.user.findFirst({where: {id: +id}});
   const customers = await Prisma.customers.findFirst({
     where: {

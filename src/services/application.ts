@@ -6,9 +6,11 @@ import { v1, v4 } from "uuid";
 import bcrypt from 'bcrypt';
 import { TableFetch } from "./type";
 import * as formatter from '@/libs/formatter';
+import { isRootAccount } from "./utils";
 
 export const createApplication = async (id: number) => {
   try {
+    if (! await isRootAccount()) throw Error("only_root_account");
     const customer = await Prisma.customers.findUnique({where: {id: id}});
     if (!customer) throw Error("not_found_customer");
     const password = v1().slice(0, 10);
@@ -58,6 +60,7 @@ export const createApplication = async (id: number) => {
 
 export const getApplications = async (table: TableFetch) => {
   try {
+    if (! await isRootAccount()) throw Error("only_root_account");
     const filter = formatter.filter(table.filter, ['firstname', 'lastname', 'email'], (text) => [
       { createdBy: { ...formatter.filter(table.filter, ['firstname', 'lastname']) }, },
     ])
@@ -122,6 +125,7 @@ export const getApplications = async (table: TableFetch) => {
 
 export const signInAsApplication = async (loginId : number) => {
   try {
+    if (! await isRootAccount()) throw Error("only_root_account");
     const token = v4();
     const user = await Prisma.user.update({
       where: {
