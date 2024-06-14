@@ -10,6 +10,7 @@ import { extname, join } from "path";
 import { Activity } from "@/libs/activity";
 import fs from "fs";
 import { push } from "@/libs/line";
+import { getApplicationLineToken } from "@/authOptions";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = [
@@ -390,7 +391,7 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
       }
     })
 
-    push(`บิล #${formatter.number(invoice.id)} ของ ${invoice.owner.firstname} ${invoice.owner.lastname} ถูกแจ้งชำระแล้วแล้ว!`)
+    push(`บิล #${formatter.number(invoice.id)} ของ ${invoice.owner.firstname} ${invoice.owner.lastname} ถูกแจ้งชำระแล้วแล้ว!`, await getApplicationLineToken(invoice.application))
 
   } catch (error) {
     return { state: false }

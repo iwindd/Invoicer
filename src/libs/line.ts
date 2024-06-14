@@ -9,7 +9,7 @@ export const push = async (msg: string, token? : string) => {
     method: 'POST',
     headers: {
       'Content-Type': 'application/x-www-form-urlencoded',
-      'Authorization': `Bearer ${token || process.env.LINE_TOKEN}`
+      'Authorization': `Bearer ${token}`
     },
     body: params
   };

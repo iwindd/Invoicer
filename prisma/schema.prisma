@@ -51,6 +51,7 @@ model Customers {
   updatedAt DateTime @updatedAt
 
   lineToken String @default("")
+  applicationlineToken String @default("")
 
   Invoice Invoice[]
 }

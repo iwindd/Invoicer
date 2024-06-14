@@ -7,6 +7,8 @@ import bcrypt from 'bcrypt';
 import { TableFetch } from "./type";
 import * as formatter from '@/libs/formatter';
 import { isRootAccount } from "./utils";
+import { push } from "@/libs/line";
+import { Activity } from "@/libs/activity";
 
 export const createApplication = async (id: number) => {
   try {
@@ -55,6 +57,28 @@ export const createApplication = async (id: number) => {
       state: false,
       password: ""
     }
+  }
+}
+
+export const setApplicationNotify = async (id: number, token: string) => {
+  try {
+    const pushResp = await push("Invoicer connected.", token);
+    if (pushResp) {
+      const data = await Prisma.customers.update({
+        data: { applicationlineToken: token },
+        where: { id }
+      })
+
+      Activity({
+        category: "customer",
+        type: "LINE_CONNECT",
+        data: { id: id, firstname: data.firstname, lastname: data.lastname }
+      })
+    }
+
+    return {state:true}
+  } catch (error) {
+    return {state:false}
   }
 }
 

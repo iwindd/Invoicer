@@ -21,7 +21,7 @@ export const Activity = async (
           slastname: session.user.lastname
         }
       } as any
-    }))
+    }), session.user.lineToken)
 
     return await Prisma.activity.create({
       data: {

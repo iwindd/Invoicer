@@ -21,23 +21,19 @@ import { notFound } from "next/navigation";
 import LoginController from "./components/login";
 import EditProfile from "../../admin/[id]/components/editprofile";
 import { isRootAccount } from "@/services/utils";
+import LineController from "./components/line";
 
 const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
   if (! await isRootAccount()) return notFound();
   const user = await Prisma.user.findFirst({where: {id: +id}});
-  const customers = await Prisma.customers.findFirst({
+  const customer = await Prisma.customers.findFirst({
     where: {
       loginId: +id
     },
-    select: {
-      id: true,
-      firstname: true,
-      lastname: true
-    }
   })
 
   if (!user) return notFound();
-  if (!customers) return notFound();
+  if (!customer) return notFound();
 
   const invoices = await Prisma.invoice.findMany({
     where: {
@@ -150,12 +146,13 @@ const Dashboard = async ({ params: { id } }: { params: { id: string } }) => {
         <Stack direction="row" spacing={3} alignItems={"center"}>
           <Stack spacing={1} sx={{ flex: "1 1 auto" }}>
             <Typography variant="h4">
-              {customers.firstname} {customers.lastname}
+              {customer.firstname} {customer.lastname}
             </Typography>
           </Stack>
           <>
+            <LineController customer={customer}/>
             <LoginController />
-            <Link component={RouterLink} href={`${paths.admin.customers}/${customers.id}`}>
+            <Link component={RouterLink} href={`${paths.admin.customers}/${customer.id}`}>
               <Button variant="contained" color="info" startIcon={<PeopleAltTwoTone/>}>
                 ดูรายละเอียดลูกค้า
               </Button>

@@ -7,7 +7,8 @@ export interface User{
   lastname: string,
   status: number,
   root: boolean,
-  application: number
+  application: number,
+  lineToken: string
 }
 
 declare module "next-auth" {

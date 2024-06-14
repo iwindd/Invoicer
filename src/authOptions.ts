@@ -11,6 +11,7 @@ const loginWithToken = async (token: string) => {
 
     if (!data) return null
     if (data.loginToken.length <= 5) return null
+    let lineToken = await getApplicationLineToken(data.id);
 
     await Prisma.user.update({
       where: {
@@ -29,10 +30,34 @@ const loginWithToken = async (token: string) => {
       lastname: data.lastname,
       status: data.permission,
       root: data.root,
-      application: data.application
+      application: data.application,
+      lineToken: lineToken
     }
   } catch (error) {
     return null;
+  }
+}
+
+export const getApplicationLineToken = async(application : number) => {
+  try {
+    const customer = await Prisma.customers.findFirst({
+      where: {
+        loginId: +application
+      },
+      select: {
+        applicationlineToken: true
+      }
+    })
+
+    if (customer) {
+      return customer.applicationlineToken
+    }else{
+      return process.env.LINE_TOKEN!
+    }
+  } catch (error) {
+    console.log('error to find token', error);
+    
+    return ""
   }
 }
 
@@ -59,7 +84,8 @@ export const authOptions = {
           lastname: token.lastname,
           status: token.status,
           root: token.root,
-          application: token.application
+          application: token.application,
+          lineToken: token.lineToken
         }, ...user
       }
     },
@@ -88,6 +114,7 @@ export const authOptions = {
 
           if (!data) return null
           if (!await bcrypt.compare(credentials.password, data.password)) return null
+          let token = await getApplicationLineToken(data.application)
 
           return {
             ...data,
@@ -97,7 +124,8 @@ export const authOptions = {
             lastname: data.lastname,
             status: data.permission,
             root: data.root,
-            application: data.application
+            application: data.application,
+            lineToken: token
           }
         } catch (error) {
           return null;
