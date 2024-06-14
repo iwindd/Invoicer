@@ -9,8 +9,6 @@ import { TotalCheckingInvoice } from "./stats/checking";
 import { TotalNearInvoice } from "./stats/near";
 import { Traffic } from "./charts/traffic";
 import { Sales } from "./charts/sales";
-import { CheckingInvoice } from "./table/checking";
-import { OvertimeInvoice } from "./table/overtime";
 import Prisma from "@/libs/prisma";
 import dayjs from "@/libs/dayjs";
 import * as ff from "@/libs/formatter";
