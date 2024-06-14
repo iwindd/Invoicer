@@ -166,6 +166,9 @@ export const getNoticeInvoice = async (id: number) => {
   const currentTime = dayjs();
 
   try {
+    const customer = await Prisma.customers.findFirst({where: {id}, select: {application: true}})
+    if (!customer) throw Error("no_found_customer");
+    
     const data = await Prisma.$transaction([
       Prisma.invoice.findMany({
         where: {
@@ -189,7 +192,8 @@ export const getNoticeInvoice = async (id: number) => {
       Prisma.payment.findFirst({
         where: {
           active: true,
-          isDeleted: false
+          isDeleted: false,
+          application: customer?.application
         },
         select: {
           title: true,
@@ -199,10 +203,18 @@ export const getNoticeInvoice = async (id: number) => {
       })
     ])
 
+
+    console.log(customer);
+    
+
     return {
       state: true,
       data: data[0],
-      account: data[1]
+      account: data[1] || {
+        title: "กรุณาเพิ่มช่องทางการชำระเงิน",
+        name: "",
+        account: ""
+      }
     }
   } catch (error) {
     return {
