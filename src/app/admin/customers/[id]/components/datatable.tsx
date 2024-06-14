@@ -88,7 +88,7 @@ const Datatable = () => {
 
   const paymentConfirm = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
-    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    text: "คุณต้องการที่จะเปลี่ยนสถานะเป็นชำระแล้วหรือไม่?",
     onConfirm: async (id: string) => {
       setBackdrop(true);
 
@@ -111,7 +111,7 @@ const Datatable = () => {
 
   const denypaymentConfirm = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
-    text: "คุณต้องการที่จากตั้งสถานะเป็นชำระแล้วหรือไม่?",
+    text: "คุณต้องการที่จะยกเลิกสถานะชำระแล้วหรือไม่?",
     onConfirm: async (id: string) => {
       setBackdrop(true);
 
