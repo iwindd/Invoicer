@@ -36,6 +36,8 @@ function SignIn() {
       redirect: false
     })
 
+    console.log(resp);
+    
     setBackdrop(false)
     if (!resp?.error) {
       enqueueSnackbar("เข้าสู่ระบบสำเร็จแล้ว!", { variant: "success" })
