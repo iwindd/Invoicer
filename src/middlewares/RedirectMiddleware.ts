@@ -12,6 +12,4 @@ export async function RedirectMiddleware(request: NextRequest) {
   }else{
     return NextResponse.rewrite(new URL(paths.auth.signIn, request.url));
   }
-
-  return NextResponse.next();
 }
