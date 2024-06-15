@@ -51,7 +51,6 @@ const Datagrid = () => {
   const { enqueueSnackbar } = useSnackbar();
   const { data: session } = useSession();
 
-  if (!session) return notFound()
 
   const deleteConfirmation = useConfirm<HTMLElement>({
     title: "แจ้งเตือน",
@@ -77,6 +76,8 @@ const Datagrid = () => {
       deleteConfirmation.handleOpen();
     }, [deleteConfirmation]),
   }
+
+  if (!session) return notFound()
 
   return (
     <>
