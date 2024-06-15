@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { pathToRegexp } from 'path-to-regexp';
+import { pathToRegexp } from './regexp';
 
 export type CustomMiddleware<T = any> = (
   request: any,
