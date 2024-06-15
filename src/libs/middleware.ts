@@ -142,7 +142,7 @@ function handleMiddlewareRedirect(
   const redirectUrl = request.headers.get('x-redirect-url');
 
   if (redirectUrl) {
-    const redirectResponse = NextResponse.redirect(redirectUrl, {
+    const redirectResponse = NextResponse.rewrite(redirectUrl, {
       headers: request.headers, // Transfer original headers to the redirect response
     });
 

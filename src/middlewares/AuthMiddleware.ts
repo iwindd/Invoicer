@@ -9,13 +9,13 @@ export async function AuthMiddleware(request: NextRequest) {
 
   if (pathname == paths.auth.signIn ) {
     if (token) {
-      return NextResponse.redirect(new URL(paths.admin.overview, request.url));
+      return NextResponse.rewrite(new URL(paths.admin.overview, request.url));
     }else{
       return NextResponse.next();
     }
   }else{
     if (!token) {
-      return NextResponse.redirect(new URL(paths.auth.signIn, request.url));
+      return NextResponse.rewrite(new URL(paths.auth.signIn, request.url));
     }
   }
 
