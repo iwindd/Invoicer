@@ -6,6 +6,7 @@ import { User } from "../next-auth";
 
 export async function middleware(request: NextRequest) {
   const path = request.nextUrl.pathname || "/";
+  const originalUrl = process.env.NEXTAUTH_URL + request.nextUrl.pathname
   const token: User = (await getToken({ req: request })) as any;
 
   function matches(pattern: string): boolean {
@@ -22,34 +23,34 @@ export async function middleware(request: NextRequest) {
   // redirect auth
   if (matches("/auth/:path*")) {
     if (token) {
-      return NextResponse.rewrite(new URL(paths.admin.overview, request.url));
+      return NextResponse.rewrite(new URL(paths.admin.overview, originalUrl));
     }
   } else {
     if (!token) {
-      return NextResponse.rewrite(new URL(paths.auth.signIn, request.url));
+      return NextResponse.rewrite(new URL(paths.auth.signIn, originalUrl));
     }
   }
 
   // redirect index
   if (matches("/") || !token) {
     if (token) {
-      return NextResponse.rewrite(new URL(paths.admin.overview, request.url));
+      return NextResponse.rewrite(new URL(paths.admin.overview, originalUrl));
     } else {
-      return NextResponse.rewrite(new URL(paths.auth.signIn, request.url));
+      return NextResponse.rewrite(new URL(paths.auth.signIn, originalUrl));
     }
   }
 
   // admin guard
   if (matches("/admin/payment/:path*") || matches("/admin/admin/:path*")) {
     if (token?.status != 1) {
-      return NextResponse.rewrite(new URL(paths.admin.overview, request.url));
+      return NextResponse.rewrite(new URL(paths.admin.overview, originalUrl));
     }
   }
 
   // root guard
   if (matches("/admin/applications/:path*")) {
     if (token?.root != true) {
-      return NextResponse.rewrite(new URL(paths.admin.overview, request.url));
+      return NextResponse.rewrite(new URL(paths.admin.overview, originalUrl));
     }
   }
 
