@@ -12,7 +12,8 @@ const loginWithToken = async (token: string) => {
     if (!data) return null
     if (data.loginToken.length <= 5) return null
     let lineToken = await getApplicationLineToken(data.id);
-
+    if (!data?.application) return null
+    
     await Prisma.user.update({
       where: {
         id: data.id
@@ -115,6 +116,7 @@ export const authOptions = {
           if (!data) return null
           if (!await bcrypt.compare(credentials.password, data.password)) return null
           let token = await getApplicationLineToken(data.application)
+          if (!data?.application) return null
 
           return {
             ...data,
