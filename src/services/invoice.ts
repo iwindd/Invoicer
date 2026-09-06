@@ -381,7 +381,7 @@ export const setInvoicePayment = async (id: number, formData: FormData) => {
     fs.writeFile(filePath, buffer, () => { });
 
     const invoice = await Prisma.invoice.update({
-      where: { id: id, application: (await getServerSession())?.user.application, },
+      where: { id: id, application: (await getServerSession())?.user.application, status: 0 },
       data: {
         image: fileName,
         status: 2

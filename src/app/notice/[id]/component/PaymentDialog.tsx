@@ -32,7 +32,8 @@ const VisuallyHiddenInput = styled('input')({
 
 const PaymentDialog = ({ onClose, open, invoices, payment }: PaymentDialogProps) => {
   const [image, setImage] = React.useState<File | null>(null);
-  const [selectInvoice, setSelectInvoice] = React.useState<number>(invoices[0].id);
+  const payable = invoices.filter((i) => i.status === 0);
+  const [selectInvoice, setSelectInvoice] = React.useState<number>(payable[0]?.id ?? 0);
   const { id } = useParams();
   const { setBackdrop } = useInterface();
   const { enqueueSnackbar } = useSnackbar();
